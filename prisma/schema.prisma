@@ -1,0 +1,424 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ══════════════════════════════════════════
+// STUDENTS
+// ══════════════════════════════════════════
+
+model Student {
+  id                  String    @id
+  firstName           String
+  lastName            String
+  preferredName       String?
+  email               String    @unique
+  phone               String?
+  localAddress        String?
+  enrollmentStatus    String
+  yearLevel           Int
+  declaredAoc         String?
+  aocDeclaredAt       DateTime?
+  cumulativeGpa       Float?
+  creditsEarned       Int       @default(0)
+  creditsAttempted    Int       @default(0)
+  academicStanding    String    @default("good_standing")
+  isFirstGeneration   Boolean   @default(false)
+  isStudentAthlete    Boolean   @default(false)
+  athleteSport        String?
+  advisorId           String?
+  brightFuturesAward  String?
+  brightFuturesActive Boolean   @default(false)
+
+  bannerSyncedAt DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  advisor            User?               @relation(fields: [advisorId], references: [id])
+  semesterGpas       SemesterGpa[]
+  contracts          Contract[]
+  degreeProgress     DegreeProgress?
+  advisingRecords    AdvisingRecord[]
+  earlyAlerts        EarlyAlert[]
+  evaluations        Evaluation[]
+  tutoringSessions   TutoringSession[]
+  sscVisits          SSCVisit[]
+  academicCoach      AcademicCoach?
+  athleticsRecord    AthleticsRecord?
+  financialFlags     FinancialFlag[]
+  predictiveInsights PredictiveInsight[]
+  auditLogs          AuditLog[]
+
+  @@index([advisorId])
+  @@index([academicStanding])
+  @@index([enrollmentStatus])
+  @@index([yearLevel])
+}
+
+model SemesterGpa {
+  id        String @id @default(cuid())
+  studentId String
+  term      String
+  termCode  String
+  gpa       Float
+  credits   Int
+  standing  String
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, termCode])
+  @@index([studentId])
+}
+
+// ══════════════════════════════════════════
+// CONTRACTS
+// ══════════════════════════════════════════
+
+model Contract {
+  id              String    @id @default(cuid())
+  studentId       String
+  term            String
+  termCode        String
+  status          String
+  signedByStudent Boolean   @default(false)
+  signedByAdvisor Boolean   @default(false)
+  signedAt        DateTime?
+  totalCredits    Int       @default(0)
+  syncedAt        DateTime?
+
+  courses ContractCourse[]
+  student Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, termCode])
+  @@index([studentId])
+  @@index([status])
+}
+
+model ContractCourse {
+  id             String  @id @default(cuid())
+  contractId     String
+  courseCode     String
+  courseTitle    String
+  credits        Int
+  instructorName String?
+
+  contract Contract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+
+  @@index([contractId])
+}
+
+// ══════════════════════════════════════════
+// DEGREE PROGRESS
+// ══════════════════════════════════════════
+
+model DegreeProgress {
+  id                    String  @id @default(cuid())
+  studentId             String  @unique
+  totalCreditsRequired  Int     @default(120)
+  totalCreditsEarned    Int     @default(0)
+  genEdRequired         Int     @default(20)
+  genEdCompleted        Int     @default(0)
+  aocName               String?
+  aocCreditRequired     Int     @default(40)
+  aocCreditCompleted    Int     @default(0)
+  aocPercentComplete    Float   @default(0)
+  ispsRequired          Int     @default(3)
+  ispsCompleted         Int     @default(0)
+  thesisStatus          String  @default("not_started")
+  thesisSponsor         String?
+  projectedGradTerm     String?
+  projectedGradTermCode String?
+  onTrackForGraduation  Boolean @default(true)
+  degreeWorksAuditAt    DateTime?
+  syncedAt              DateTime?
+
+  ispRecords ISPRecord[]
+  minors     MinorProgress[]
+  student    Student         @relation(fields: [studentId], references: [id], onDelete: Cascade)
+}
+
+model ISPRecord {
+  id               String @id @default(cuid())
+  degreeProgressId String
+  title            String
+  term             String
+  termCode         String
+  status           String
+  supervisorName   String?
+
+  degreeProgress DegreeProgress @relation(fields: [degreeProgressId], references: [id], onDelete: Cascade)
+
+  @@index([degreeProgressId])
+}
+
+model MinorProgress {
+  id               String   @id @default(cuid())
+  degreeProgressId String
+  minorName        String
+  isDeclared       Boolean  @default(false)
+  coursesRequired  Int
+  coursesCompleted Int
+  percentComplete  Float
+  coursesNeeded    String   @default("[]") // JSON-encoded string[] (SQLite has no arrays)
+
+  degreeProgress DegreeProgress @relation(fields: [degreeProgressId], references: [id], onDelete: Cascade)
+
+  @@index([degreeProgressId])
+}
+
+// ══════════════════════════════════════════
+// ADVISING RECORDS
+// ══════════════════════════════════════════
+
+model AdvisingRecord {
+  id              String   @id @default(cuid())
+  studentId       String
+  advisorId       String?
+  advisorName     String
+  appointmentDate DateTime
+  duration        Int?
+  meetingType     String
+  outcome         String
+  noteText        String?
+  noteType        String?
+  termCode        String?
+  navigateId      String?  @unique
+  syncedAt        DateTime?
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@index([appointmentDate])
+}
+
+model EarlyAlert {
+  id         String    @id @default(cuid())
+  studentId  String
+  alertType  String
+  raisedBy   String
+  raisedAt   DateTime
+  status     String    @default("open")
+  resolvedAt DateTime?
+  notes      String?
+  navigateId String?   @unique
+  syncedAt   DateTime?
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@index([status])
+}
+
+// ══════════════════════════════════════════
+// NARRATIVE EVALUATIONS
+// ══════════════════════════════════════════
+
+model Evaluation {
+  id             String    @id @default(cuid())
+  studentId      String
+  instructorName String
+  courseCode     String
+  courseTitle    String
+  term           String
+  termCode       String
+  evaluationText String
+  status         String
+  submittedAt    DateTime?
+  sourceId       String?   @unique
+  syncedAt       DateTime?
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@index([termCode])
+}
+
+// ══════════════════════════════════════════
+// TUTORING
+// ══════════════════════════════════════════
+
+model TutoringSession {
+  id           String   @id @default(cuid())
+  studentId    String
+  sessionDate  DateTime
+  durationMins Int
+  subject      String
+  courseCode   String?
+  tutorName    String?
+  sessionType  String
+  wasNoShow    Boolean  @default(false)
+  term         String
+  termCode     String
+  knackId      String?  @unique
+  syncedAt     DateTime?
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@index([termCode])
+  @@index([sessionDate])
+}
+
+// ══════════════════════════════════════════
+// STUDENT SUCCESS CENTER
+// ══════════════════════════════════════════
+
+model SSCVisit {
+  id          String   @id @default(cuid())
+  studentId   String
+  visitDate   DateTime
+  visitType   String
+  serviceType String
+  staffName   String?
+  notes       String?
+  term        String
+  termCode    String
+  knackId     String?  @unique
+  syncedAt    DateTime?
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@index([termCode])
+}
+
+model AcademicCoach {
+  id         String    @id @default(cuid())
+  studentId  String    @unique
+  coachName  String
+  coachEmail String?
+  assignedAt DateTime?
+  syncedAt   DateTime?
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+}
+
+// ══════════════════════════════════════════
+// ATHLETICS
+// ══════════════════════════════════════════
+
+model AthleticsRecord {
+  id                  String   @id @default(cuid())
+  studentId           String   @unique
+  sport               String
+  eligibilityStatus   String
+  gpaRequired         Float    @default(2.0)
+  creditLoadRequired  Int      @default(12)
+  semesterCertHistory String   @default("[]") // JSON-encoded (SQLite has no Json)
+  farNotes            String?
+  syncedAt            DateTime?
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+}
+
+// ══════════════════════════════════════════
+// FINANCIAL FLAGS
+// ══════════════════════════════════════════
+
+model FinancialFlag {
+  id        String    @id @default(cuid())
+  studentId String
+  flagType  String
+  isActive  Boolean   @default(true)
+  addedAt   DateTime
+  clearedAt DateTime?
+  syncedAt  DateTime?
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@index([isActive])
+}
+
+// ══════════════════════════════════════════
+// PREDICTIVE INSIGHTS
+// ══════════════════════════════════════════
+
+model PredictiveInsight {
+  id           String    @id @default(cuid())
+  studentId    String
+  insightType  String
+  insightCode  String
+  title        String
+  body         String
+  subtext      String?
+  ctaText      String?
+  severity     String
+  isDismissed  Boolean   @default(false)
+  dismissedAt  DateTime?
+  isDiscussed  Boolean   @default(false)
+  discussedAt  DateTime?
+  generatedAt  DateTime  @default(now())
+  expiresAt    DateTime?
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@index([isDismissed])
+  @@index([insightType])
+}
+
+// ══════════════════════════════════════════
+// USERS / ADVISORS
+// ══════════════════════════════════════════
+
+model User {
+  id          String    @id @default(cuid())
+  email       String    @unique
+  name        String
+  ncfUsername String?   @unique
+  accessTier  Int
+  isActive    Boolean   @default(true)
+  lastLoginAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  advisees  Student[]
+  auditLogs AuditLog[] @relation("UserAuditLogs")
+}
+
+// ══════════════════════════════════════════
+// AUDIT LOG
+// ══════════════════════════════════════════
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  studentId String?
+  action    String
+  panelName String?
+  metadata  String? // JSON-encoded (SQLite has no Json)
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  user    User     @relation("UserAuditLogs", fields: [userId], references: [id])
+  student Student? @relation(fields: [studentId], references: [id])
+
+  @@index([userId])
+  @@index([studentId])
+  @@index([createdAt])
+}
+
+// ══════════════════════════════════════════
+// SYNC STATUS
+// ══════════════════════════════════════════
+
+model SyncRun {
+  id               String    @id @default(cuid())
+  connector        String
+  status           String
+  startedAt        DateTime
+  completedAt      DateTime?
+  recordsProcessed Int       @default(0)
+  errorCount       Int       @default(0)
+  errorLog         String?
+  triggeredBy      String    @default("scheduler")
+
+  @@index([connector])
+  @@index([startedAt])
+}
