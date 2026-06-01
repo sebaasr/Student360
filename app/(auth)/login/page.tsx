@@ -17,44 +17,92 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-navy to-navy-dark p-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-navy">Student 360</h1>
-          <p className="text-sm text-gray-500 mt-1">New College of Florida · Advising Dashboard</p>
+    <main className="min-h-screen flex items-center justify-center bg-navy p-4 relative overflow-hidden">
+      {/* subtle background pattern */}
+      <div className="absolute inset-0 opacity-5"
+        style={{ backgroundImage: "radial-gradient(circle at 25% 25%, #B3A369 0%, transparent 50%), radial-gradient(circle at 75% 75%, #B3A369 0%, transparent 50%)" }}
+      />
+
+      <div className="relative w-full max-w-sm">
+        {/* Logo mark */}
+        <div className="flex flex-col items-center mb-8">
+          <div className="w-16 h-16 rounded-xl bg-white shadow-lg flex items-center justify-center mb-4">
+            <span className="text-navy font-serif text-3xl font-bold select-none">S</span>
+          </div>
+          <h1 className="text-white text-2xl font-serif font-bold tracking-wide">Student 360</h1>
+          <p className="text-gold text-xs uppercase tracking-[0.2em] mt-1 font-medium">
+            New College of Florida
+          </p>
         </div>
 
-        {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800">
-            Sign-in failed: {error === "CredentialsSignin" ? "email not recognized" : error}
-          </div>
-        )}
+        {/* Card */}
+        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+          <div className="h-1 bg-gradient-to-r from-navy via-navy/60 to-gold" />
+          <div className="p-8">
+            <p className="text-sm text-gray-600 mb-6 text-center">
+              Sign in with your NCF credentials to access the advising dashboard.
+            </p>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">NCF email</label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@ncf.edu"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-navy focus:border-navy"
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full bg-navy text-white py-2 rounded-lg hover:bg-navy-dark transition disabled:opacity-50"
-          >
-            {submitting ? "Signing in…" : "Sign in"}
-          </button>
-        </form>
+            {error && (
+              <div className="mb-5 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800">
+                {error === "CredentialsSignin"
+                  ? "Email not recognized. Make sure it matches a seeded user."
+                  : `Sign-in error: ${error}`}
+              </div>
+            )}
 
-        <div className="mt-6 text-[11px] text-gray-400 border-t border-gray-100 pt-4">
-          Dev mode: enter a seeded user email (e.g. <code>mlopezzafra@ncf.edu</code>). Production
-          uses NCF SSO via Microsoft Entra.
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+                  NCF Email
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@ncf.edu"
+                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-navy focus:border-navy outline-none transition-shadow"
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={submitting}
+                className="w-full bg-navy text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-navy-dark transition-colors disabled:opacity-60"
+              >
+                {submitting ? "Signing in…" : "Sign in"}
+              </button>
+            </form>
+
+            <div className="mt-6 pt-4 border-t border-gray-100">
+              <p className="text-[11px] text-gray-400 text-center leading-relaxed">
+                Production uses NCF Single Sign-On via Microsoft Entra.
+              </p>
+              <div className="mt-3 space-y-1">
+                <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">Dev accounts</p>
+                {[
+                  { email: "mlopezzafra@ncf.edu", role: "Provost (all students)" },
+                  { email: "faculty@ncf.edu", role: "Faculty Advisor" },
+                  { email: "itadmin@ncf.edu", role: "IT Admin" },
+                ].map((u) => (
+                  <button
+                    key={u.email}
+                    type="button"
+                    onClick={() => setEmail(u.email)}
+                    className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-md text-[11px] text-gray-500 hover:bg-gray-50 hover:text-navy transition-colors text-left"
+                  >
+                    <span className="font-mono">{u.email}</span>
+                    <span className="text-gray-400">{u.role}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
+
+        <p className="text-center text-[10px] text-navy-light/40 mt-6">
+          FERPA-protected · Access is logged · For authorized NCF staff only
+        </p>
       </div>
     </main>
   );
