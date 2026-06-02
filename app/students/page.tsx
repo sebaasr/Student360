@@ -34,7 +34,7 @@ export default async function AllStudentsPage() {
     <PageShell>
       <div className="max-w-7xl mx-auto p-6">
         <div className="mb-2 text-xs uppercase tracking-wide text-gray-500">All students</div>
-        <RosterTable initial={roster} title="All students across the college" />
+        <RosterTable initial={roster} />
       </div>
     </PageShell>
   );
