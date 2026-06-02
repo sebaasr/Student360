@@ -25,7 +25,7 @@ interface Props {
 const CURRENT_TERM_CODE = "202601";
 
 export function ProfileBody({ data }: Props) {
-  const [lens, setLens] = useState<Lens>("since_entry");
+  const [lens, setLens] = useState<Lens>("this_semester");
 
   const allowed: string[] = data.allowedPanels ?? [];
   const has = (panel: string) => allowed.includes(panel);

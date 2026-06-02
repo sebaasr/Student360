@@ -30,7 +30,7 @@ export function AcademicStandingCard({
   };
 
   return (
-    <Card title="Academic Standing" icon="📚" footer="Source: Banner · DegreeWorks">
+    <Card title="Academic Standing" footer="Source: Banner · DegreeWorks">
       <div className="grid grid-cols-3 gap-3 mb-3 text-center">
         <Stat label="Cumulative GPA" value={cumulativeGpa?.toFixed(2) ?? "—"} />
         <Stat label="Credits earned" value={String(creditsEarned)} />

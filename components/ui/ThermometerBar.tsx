@@ -72,7 +72,7 @@ export function ThermometerBar({
           </div>
         )}
         {showPacingWarning && (
-          <div className="text-[10.5px] text-amber-700 mt-0.5">⚠️ Pacing risk — plan soon</div>
+          <div className="text-[10.5px] text-amber-700 mt-0.5">Pacing risk — plan soon</div>
         )}
       </div>
 

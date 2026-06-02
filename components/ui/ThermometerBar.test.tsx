@@ -26,7 +26,7 @@ describe("ThermometerBar", () => {
         label="Philosophy Minor"
         current={4}
         total={6}
-        alertLabel="Undeclared ✨"
+        alertLabel="Undeclared"
       />,
     );
     expect(screen.getByText(/Undeclared/)).toBeInTheDocument();

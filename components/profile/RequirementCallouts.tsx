@@ -1,9 +1,9 @@
 import type { RequirementCallout } from "@/lib/student-progress";
 
 const iconMap: Record<RequirementCallout["id"], string> = {
-  aoc: "📘",
-  gen_ed: "🧭",
-  graduation: "🎓",
+  aoc: "AOC",
+  gen_ed: "GE",
+  graduation: "GRAD",
 };
 
 export function RequirementCallouts({ callouts }: { callouts: RequirementCallout[] }) {
@@ -16,7 +16,7 @@ export function RequirementCallouts({ callouts }: { callouts: RequirementCallout
         >
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-navy-light flex items-center justify-center text-base">
+              <div className="w-8 h-8 rounded-full bg-navy-light flex items-center justify-center text-[9px] font-bold text-navy tracking-wide">
                 {iconMap[c.id]}
               </div>
               <div className="text-[10.5px] font-bold text-gray-500 uppercase tracking-wide">

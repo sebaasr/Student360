@@ -13,14 +13,12 @@ export function SuggestedCourses({ courses }: { courses: SuggestedCourse[] }) {
   return (
     <Card
       title="Suggested for next semester"
-      icon="✨"
       footer="Heuristic based on AOC/Gen Ed gaps · DegreeWorks audit"
     >
       {courses.length === 0 ? (
         <EmptyState
           title="No suggestions yet"
           description="Suggestions appear once DegreeWorks data shows clear gaps."
-          icon="🪄"
         />
       ) : (
         <div className="space-y-2">

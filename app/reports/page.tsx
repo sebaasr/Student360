@@ -24,8 +24,8 @@ export default async function ReportsPage() {
       <PageShell>
         <div className="max-w-3xl mx-auto p-6 text-center">
           <div className="bg-white border border-red-200 rounded-xl p-8">
-            <div className="text-3xl mb-2">🚫</div>
-            <h2 className="text-lg font-semibold text-red-800">Access denied</h2>
+            <div className="text-xs font-bold uppercase tracking-widest text-red-400 mb-2">Access denied</div>
+            <h2 className="text-lg font-semibold text-red-800">Reports</h2>
             <p className="text-sm text-gray-600 mt-1">
               Reports are available to Registrar / Provost Office and above.
             </p>

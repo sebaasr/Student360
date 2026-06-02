@@ -18,14 +18,14 @@ export function BrightFuturesCard({ status }: Props) {
       border: "border-yellow-200",
       dot: "bg-yellow-500",
       text: "text-yellow-800",
-      label: "At Risk ⚠️",
+      label: "At Risk",
     },
     red: {
       bg: "bg-red-50",
       border: "border-red-200",
       dot: "bg-red-500",
       text: "text-red-800",
-      label: "Below Threshold 🚨",
+      label: "Below Threshold",
     },
     none: {
       bg: "bg-gray-50",
@@ -40,7 +40,7 @@ export function BrightFuturesCard({ status }: Props) {
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-4">
       <h3 className="text-[10.5px] font-bold text-gray-500 uppercase tracking-wide mb-3">
-        🌟 Bright Futures Scholarship
+        Bright Futures Scholarship
       </h3>
 
       <div
@@ -64,7 +64,7 @@ export function BrightFuturesCard({ status }: Props) {
                   : `${status.buffer.toFixed(2)} below`
                 : "—",
             ],
-            ["Credits", status.creditsMet ? "Met ✓" : "⚠️ Below minimum"],
+            ["Credits", status.creditsMet ? "Met" : "Below minimum"],
             [
               "Status",
               status.color === "green"

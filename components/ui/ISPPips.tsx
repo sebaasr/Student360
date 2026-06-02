@@ -29,7 +29,7 @@ export function ISPPips({ completed, required, semestersRemaining }: ISPPipsProp
         <span className={hasPacingRisk ? "text-amber-700 font-semibold" : ""}>
           {remaining} remaining
         </span>
-        {hasPacingRisk && " · ⚠️ Pacing risk"}
+        {hasPacingRisk && " · Pacing risk — plan soon"}
       </div>
     </div>
   );

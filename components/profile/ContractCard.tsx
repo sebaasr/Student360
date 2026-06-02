@@ -31,7 +31,7 @@ export function ContractCard({ contracts }: { contracts: Contract[] }) {
   const current = contracts[0];
   if (!current) {
     return (
-      <Card title="Contract" icon="📝">
+      <Card title="Contract">
         <div className="text-sm text-gray-500">No contract on file.</div>
       </Card>
     );
@@ -39,7 +39,7 @@ export function ContractCard({ contracts }: { contracts: Contract[] }) {
   const s = statusLabel[current.status] ?? { text: current.status, variant: "neutral" as const };
 
   return (
-    <Card title={`Contract — ${current.term}`} icon="📝" footer="Source: Banner / Registrar">
+    <Card title={`Contract — ${current.term}`} footer="Source: Banner / Registrar">
       <div className="flex items-center gap-2 mb-2">
         <Badge variant={s.variant}>{s.text}</Badge>
         <div className="text-xs text-gray-500">{current.totalCredits} credits</div>

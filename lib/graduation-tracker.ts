@@ -96,7 +96,7 @@ export function buildGraduationTracker(
         unit: "courses",
         colorScheme: minor.isDeclared ? "navy" : "amber",
         ticks: [],
-        alertLabel: !minor.isDeclared ? "Undeclared ✨" : undefined,
+        alertLabel: !minor.isDeclared ? "Undeclared" : undefined,
         displayType: "bar",
       });
     }

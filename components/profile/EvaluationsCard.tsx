@@ -21,9 +21,9 @@ const statusVariant: Record<string, "green" | "amber" | "red" | "neutral"> = {
 
 export function EvaluationsCard({ evaluations }: { evaluations: Evaluation[] }) {
   return (
-    <Card title="Narrative Evaluations" icon="📝" footer="Source: NCF Evaluations">
+    <Card title="Narrative Evaluations" footer="Source: NCF Evaluations">
       {evaluations.length === 0 ? (
-        <EmptyState title="No evaluations on file" icon="📄" />
+        <EmptyState title="No evaluations on file" />
       ) : (
         <div className="space-y-2">
           {evaluations.map((e) => (

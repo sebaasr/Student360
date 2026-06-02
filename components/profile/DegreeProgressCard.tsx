@@ -30,13 +30,13 @@ interface DegreeProgress {
 export function DegreeProgressCard({ dp }: { dp: DegreeProgress | null }) {
   if (!dp) {
     return (
-      <Card title="Degree Progress" icon="🎯">
+      <Card title="Degree Progress">
         <div className="text-sm text-gray-500">No degree audit available.</div>
       </Card>
     );
   }
   return (
-    <Card title="Degree Audit Details" icon="🎯" footer="Source: DegreeWorks">
+    <Card title="Degree Audit Details" footer="Source: DegreeWorks">
       <div className="space-y-3">
         {dp.projectedGradTerm && (
           <div className="text-xs">

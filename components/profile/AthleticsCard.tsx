@@ -19,7 +19,7 @@ const statusVariant: Record<string, "green" | "amber" | "red" | "neutral"> = {
 
 export function AthleticsCard({ athletics }: { athletics: AthleticsRecord }) {
   return (
-    <Card title="Athletics" icon="🏆" footer="Source: Banner Athletics · FAR notes">
+    <Card title="Athletics" footer="Source: Banner Athletics · FAR notes">
       <div className="flex items-center gap-2 mb-2">
         <Badge variant={statusVariant[athletics.eligibilityStatus] ?? "neutral"}>
           {athletics.eligibilityStatus.replace("_", " ")}

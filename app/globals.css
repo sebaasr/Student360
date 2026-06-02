@@ -10,17 +10,34 @@
   --border: #e2e8f0;
   --text: #1a1e2a;
   --muted: #64748b;
-  --surface: #f5f6f8;
+  --surface: #f0f2f5;
 }
 
 html,
 body {
   background: var(--surface);
   color: var(--text);
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+}
+
+/* Serif headings use Lora */
+h1, h2, .font-serif {
+  font-family: var(--font-lora), Georgia, serif;
 }
 
 * {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Tighter focus ring */
+:focus-visible {
+  outline: 2px solid var(--navy);
+  outline-offset: 2px;
+}
+
+/* Consistent scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }

@@ -18,9 +18,9 @@ export function TutoringCard({ sessions }: { sessions: TutoringSession[] }) {
   const noShows = sessions.filter((s) => s.wasNoShow).length;
 
   return (
-    <Card title="Tutoring" icon="🎒" footer="Source: Knack (Tutoring)">
+    <Card title="Tutoring" footer="Source: Knack (Tutoring)">
       {sessions.length === 0 ? (
-        <EmptyState title="No tutoring sessions this term" icon="📚" />
+        <EmptyState title="No tutoring sessions this term" />
       ) : (
         <>
           <div className="flex gap-4 mb-3 text-sm">

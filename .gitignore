@@ -41,5 +41,8 @@ __pycache__/
 .venv/
 venv/
 
-# prisma
-prisma/migrations/dev.db*
+# prisma — never commit local databases
+**/*.db
+**/*.db-journal
+**/*.db-wal
+**/*.db-shm

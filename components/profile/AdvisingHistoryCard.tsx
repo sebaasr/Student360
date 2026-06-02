@@ -31,7 +31,7 @@ export function AdvisingHistoryCard({
   noteVisibility?: "full" | "redacted";
 }) {
   return (
-    <Card title="Advising" icon="🗣️" footer="Source: Navigate 360 (EAB)">
+    <Card title="Advising" footer="Source: Navigate 360 (EAB)">
       {earlyAlerts.length > 0 && (
         <div className="mb-3">
           <div className="text-[10.5px] font-bold text-gray-500 uppercase tracking-wide mb-1">
@@ -57,7 +57,7 @@ export function AdvisingHistoryCard({
         Recent meetings
       </div>
       {advising.length === 0 ? (
-        <EmptyState title="No advising meetings this term" icon="🗓️" />
+        <EmptyState title="No advising meetings on record" />
       ) : (
         <div className="space-y-1">
           {advising.map((r) => (
