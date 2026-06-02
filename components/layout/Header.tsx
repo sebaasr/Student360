@@ -35,13 +35,15 @@ export function Header() {
     <header className="bg-navy text-white border-b-4 border-gold">
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center gap-6">
         <Link href="/roster" className="flex items-center gap-3 shrink-0">
-          <div className="w-9 h-10 rounded-sm bg-white/95 text-navy flex items-center justify-center font-serif text-xl font-bold">
-            S
-          </div>
+          <img
+            src="/ncf-shield.png"
+            alt="New College of Florida"
+            className="w-8 h-8 object-contain brightness-0 invert"
+          />
           <div className="leading-tight">
             <div className="text-base font-serif font-bold tracking-wide">Student 360</div>
             <div className="text-[10px] uppercase tracking-[0.16em] text-gray-300">
-              New College of Florida · The Honors College
+              New College of Florida
             </div>
           </div>
         </Link>

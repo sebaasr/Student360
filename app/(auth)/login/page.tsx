@@ -26,8 +26,8 @@ export default function LoginPage() {
       <div className="relative w-full max-w-sm">
         {/* Logo mark */}
         <div className="flex flex-col items-center mb-8">
-          <div className="w-16 h-16 rounded-xl bg-white shadow-lg flex items-center justify-center mb-4">
-            <span className="text-navy font-serif text-3xl font-bold select-none">S</span>
+          <div className="w-16 h-16 flex items-center justify-center mb-4">
+            <img src="/ncf-shield.png" alt="New College of Florida" className="w-16 h-16 object-contain brightness-0 invert" />
           </div>
           <h1 className="text-white text-2xl font-serif font-bold tracking-wide">Student 360</h1>
           <p className="text-gold text-xs uppercase tracking-[0.2em] mt-1 font-medium">
