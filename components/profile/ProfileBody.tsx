@@ -6,6 +6,7 @@ import { AcademicTimeline } from "./AcademicTimeline";
 import { OverallProgress } from "./OverallProgress";
 import { RequirementCallouts } from "./RequirementCallouts";
 import { SuggestedCourses } from "./SuggestedCourses";
+import { GraduationTracker } from "./GraduationTracker";
 import { PredictiveInsightsPanel } from "./PredictiveInsightsPanel";
 import { BrightFuturesCard } from "./BrightFuturesCard";
 import { AcademicStandingCard } from "./AcademicStandingCard";
@@ -25,7 +26,7 @@ interface Props {
 const CURRENT_TERM_CODE = "202601";
 
 export function ProfileBody({ data }: Props) {
-  const [lens, setLens] = useState<Lens>("this_semester");
+  const [lens, setLens] = useState<Lens>("since_entry");
 
   const allowed: string[] = data.allowedPanels ?? [];
   const has = (panel: string) => allowed.includes(panel);
@@ -48,29 +49,55 @@ export function ProfileBody({ data }: Props) {
 }
 
 function SinceEntryLens({ data, has }: { data: any; has: (p: string) => boolean }) {
+  const currentContracts = (data.contracts ?? []).filter(
+    (c: any) => c.termCode === CURRENT_TERM_CODE,
+  );
+
   return (
     <div className="space-y-4">
-      {data.timeline && (
-        <AcademicTimeline
-          rows={data.timeline}
-          currentTermCode={CURRENT_TERM_CODE}
-          note="Numbers come from Banner term GPAs and DegreeWorks audit. Missing narratives are flagged amber."
-        />
-      )}
-      {has("graduation_tracker") && data.overallProgress && (
-        <OverallProgress
-          progress={data.overallProgress}
-          expectedGraduation={data.degreeProgress?.projectedGradTerm}
-          yearLabel={yearLabel(data.student.yearLevel)}
-        />
-      )}
-      {has("graduation_tracker") && data.requirementCallouts && (
-        <RequirementCallouts callouts={data.requirementCallouts} />
-      )}
-      {has("predictive") && data.predictiveInsights && (
+      {/* Predictive insights — full width, first thing the advisor sees */}
+      {has("predictive") && data.predictiveInsights?.length > 0 && (
         <PredictiveInsightsPanel
           studentId={data.student.id}
           insights={data.predictiveInsights}
+        />
+      )}
+
+      {/* Row 1: Academic Standing | Contract | Degree Progress */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {has("academic") && data.academic && (
+          <AcademicStandingCard {...data.academic} />
+        )}
+        {has("contract") && (
+          <ContractCard
+            contracts={currentContracts.length > 0 ? currentContracts : data.contracts ?? []}
+          />
+        )}
+        {has("graduation_tracker") && data.degreeProgress && (
+          <DegreeProgressCard dp={data.degreeProgress} />
+        )}
+      </div>
+
+      {/* Row 2: Advising History | Most Recent Evaluation */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {(has("advising") || has("advising_limited")) && (
+          <AdvisingHistoryCard
+            advising={data.advising ?? []}
+            earlyAlerts={data.earlyAlerts ?? []}
+            noteVisibility={has("advising") ? "full" : "redacted"}
+          />
+        )}
+        {has("evaluations") && data.evaluations && (
+          <EvaluationsCard evaluations={data.evaluations.slice(0, 1)} />
+        )}
+      </div>
+
+      {/* Row 3: Graduation tracker bars (full width) */}
+      {has("graduation_tracker") && data.degreeProgress && (
+        <GraduationTracker
+          degreeProgress={data.degreeProgress}
+          creditsEarned={data.student.creditsEarned}
+          yearLevel={data.student.yearLevel}
         />
       )}
     </div>
