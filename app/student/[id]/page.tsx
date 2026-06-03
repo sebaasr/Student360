@@ -4,6 +4,7 @@ import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { PageShell } from "@/components/layout/PageShell";
 import { StudentHeader } from "@/components/profile/StudentHeader";
+import { SourceSystemBar } from "@/components/profile/SourceSystemBar";
 import { FlagBanner } from "@/components/profile/FlagBanner";
 import { ProfileBody } from "@/components/profile/ProfileBody";
 
@@ -64,6 +65,7 @@ export default async function StudentPage({ params }: { params: { id: string } }
           onTrack={onTrack}
           hasHold={hasHold}
         />
+        <SourceSystemBar studentId={data.student.id} />
         <FlagBanner
           academicStanding={data.flags.academicStanding}
           earlyAlerts={data.flags.earlyAlerts}
