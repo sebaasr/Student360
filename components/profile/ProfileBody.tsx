@@ -235,14 +235,27 @@ function AdvisingLens({ data, has, termCode: _termCode }: { data: any; has: (p: 
 }
 
 function AthleticsLens({ data, has }: { data: any; has: (p: string) => boolean }) {
-  if (!has("athletics") || !data.athletics) {
+  if (!data.student.isStudentAthlete) {
     return (
       <div className="bg-white border border-gray-200 rounded-xl p-6 text-center text-gray-500 text-sm">
-        Athletics data not available for this student.
+        This student is not a certified student-athlete.
       </div>
     );
   }
-  return <AthleticsCard athletics={data.athletics} />;
+  if (!has("athletics") || !data.athletics) {
+    return (
+      <div className="bg-white border border-gray-200 rounded-xl p-6 text-center text-gray-500 text-sm">
+        Athletics eligibility data not available at your access level.
+      </div>
+    );
+  }
+  return (
+    <AthleticsCard
+      athletics={data.athletics}
+      currentGpa={data.student.cumulativeGpa}
+      creditsEarned={data.student.creditsEarned}
+    />
+  );
 }
 
 function FinancialLens({ data, has }: { data: any; has: (p: string) => boolean }) {

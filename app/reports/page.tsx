@@ -103,7 +103,7 @@ export default async function ReportsPage() {
 
         <p className="text-[11px] text-gray-400">
           Reports are read-only snapshots at the time the page was rendered. CSV exports + Title IX
-          / NCAA compliance reports will land in this view.
+          / NAIA compliance reports will land in this view.
         </p>
       </div>
     </PageShell>

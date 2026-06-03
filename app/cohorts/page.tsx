@@ -25,10 +25,12 @@ interface Cohort {
 }
 
 const COHORTS: Cohort[] = [
-  { id: "ftic", label: "FTIC (first-year)", description: "First-time-in-college students currently enrolled.", filter: (s) => s.yearLevel === 1 },
+  { id: "ftic", label: "FTIC (first-year)", description: "First-time-in-college students currently enrolled.", filter: (s) => s.yearLevel === 1 && !s.isTransfer },
   { id: "sophomores", label: "Sophomores", description: "Second-year students.", filter: (s) => s.yearLevel === 2 },
   { id: "juniors", label: "Juniors", description: "Third-year students.", filter: (s) => s.yearLevel === 3 },
   { id: "seniors", label: "Seniors", description: "Fourth-year students with thesis on the horizon.", filter: (s) => s.yearLevel === 4 },
+  { id: "transfers", label: "Transfer students", description: "Students who transferred in with prior college credits.", filter: (s) => s.isTransfer },
+  { id: "athletes", label: "Student-athletes", description: "Certified NAIA Sun Conference student-athletes.", filter: (s) => s.isStudentAthlete },
   { id: "probation", label: "On probation", description: "Students whose standing is academic probation.", filter: (s) => s.academicStanding === "academic_probation" },
   { id: "bf_at_risk", label: "Bright Futures at risk", description: "Students whose BF status is yellow or red.", filter: (s) => s.brightFuturesStatus === "yellow" || s.brightFuturesStatus === "red" },
   { id: "no_meet", label: "Not met this term", description: "Students with no advising meeting recorded this term.", filter: (s) => s.lastAdvisingDate === null },

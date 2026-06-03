@@ -36,6 +36,7 @@ export const TIER_PANELS: Record<number, string[]> = {
     "predictive",
     "graduation_tracker",
     "bright_futures",
+    "athletics",
   ],
   2: ["academic", "tutoring", "ssc", "advising_limited", "predictive", "graduation_tracker"],
   3: ["academic", "contract", "evaluations", "graduation_tracker"],
