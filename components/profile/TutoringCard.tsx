@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { formatDate } from "@/lib/utils";
+import { TutoringBarChart } from "@/components/ui/Charts";
 
 interface TutoringSession {
   id: string;
@@ -39,6 +40,19 @@ export function TutoringCard({ sessions }: { sessions: TutoringSession[] }) {
               </div>
             )}
           </div>
+          {sessions.length >= 2 && (
+            <div className="mb-3">
+              <TutoringBarChart
+                data={[...sessions]
+                  .reverse()
+                  .map((s) => ({
+                    label: formatDate(s.sessionDate).replace(/,?\s\d{4}$/, ""),
+                    minutes: s.durationMins,
+                    noShow: s.wasNoShow,
+                  }))}
+              />
+            </div>
+          )}
           <div className="space-y-1">
             {sessions.slice(0, 8).map((s) => (
               <div

@@ -1,5 +1,6 @@
 import { Avatar } from "@/components/ui/Avatar";
 import { yearLabel, studentDisplayName } from "@/lib/utils";
+import { ProfileActions } from "./ProfileActions";
 
 interface Props {
   student: {
@@ -134,26 +135,11 @@ export function StudentHeader({
             </div>
 
             {/* Action buttons */}
-            <div className="flex gap-2">
-              <ActionButton
-                href={`mailto:${student.email}`}
-                label="Email Student"
-                icon="✉"
-                variant="ghost"
-              />
-              <ActionButton
-                href="#"
-                label="View in Navigate"
-                icon="↗"
-                variant="ghost"
-              />
-              <ActionButton
-                href="#"
-                label="Log Meeting Note"
-                icon="✎"
-                variant="primary"
-              />
-            </div>
+            <ProfileActions
+              studentId={student.id}
+              studentEmail={student.email}
+              studentName={name}
+            />
           </div>
         </div>
       </div>
@@ -175,30 +161,6 @@ function StatBlock({ label, value, accent = "text-navy" }: { label: string; valu
       <div className="text-[10px] uppercase tracking-widest text-gray-400 font-semibold">{label}</div>
       <div className={`text-xl font-bold ${accent}`}>{value}</div>
     </div>
-  );
-}
-
-function ActionButton({
-  href,
-  label,
-  icon,
-  variant,
-}: {
-  href: string;
-  label: string;
-  icon: string;
-  variant: "primary" | "ghost";
-}) {
-  const base = "inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors";
-  const cls =
-    variant === "primary"
-      ? `${base} bg-navy text-white hover:bg-navy-dark`
-      : `${base} border border-gray-200 text-gray-600 hover:bg-gray-50`;
-  return (
-    <a href={href} className={cls}>
-      <span>{icon}</span>
-      {label}
-    </a>
   );
 }
 

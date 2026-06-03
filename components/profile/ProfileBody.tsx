@@ -123,14 +123,19 @@ function SinceEntryLens({ data, has, termCode }: { data: any; has: (p: string) =
         )}
       </div>
 
-      {/* Row 3: Graduation tracker bars (full width) */}
-      {has("graduation_tracker") && data.degreeProgress && (
-        <GraduationTracker
-          degreeProgress={data.degreeProgress}
-          creditsEarned={data.student.creditsEarned}
-          yearLevel={data.student.yearLevel}
-        />
-      )}
+      {/* Row 3: Graduation tracker | Recommended courses */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {has("graduation_tracker") && data.degreeProgress && (
+          <GraduationTracker
+            degreeProgress={data.degreeProgress}
+            creditsEarned={data.student.creditsEarned}
+            yearLevel={data.student.yearLevel}
+          />
+        )}
+        {has("graduation_tracker") && data.suggestedCourses?.length > 0 && (
+          <SuggestedCourses courses={data.suggestedCourses} />
+        )}
+      </div>
     </div>
   );
 }

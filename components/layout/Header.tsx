@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { TIER_LABELS, TIER_SEES_ALL } from "@/lib/rbac";
+import { CommandPalette } from "./CommandPalette";
 
 interface NavTab {
   href: string;
@@ -74,6 +75,7 @@ export function Header() {
 
         {session?.user && (
           <div className="flex items-center gap-3 shrink-0">
+            <CommandPaletteHint />
             <div className="text-right">
               <div className="text-sm font-medium">{session.user.name}</div>
               <div className="text-[10px] uppercase tracking-wide text-gray-300">
@@ -92,6 +94,7 @@ export function Header() {
           </div>
         )}
       </div>
+      <CommandPalette />
     </header>
   );
 }
@@ -104,4 +107,17 @@ function initials(s: string): string {
     .slice(0, 2)
     .join("")
     .toUpperCase();
+}
+
+function CommandPaletteHint() {
+  return (
+    <button
+      onClick={() => window.dispatchEvent(new Event("open-command-palette"))}
+      className="hidden sm:flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-gray-300 text-xs transition-colors"
+      title="Quick jump to a student"
+    >
+      <span>Search students</span>
+      <kbd className="text-[10px] bg-white/15 rounded px-1 py-0.5">⌘K</kbd>
+    </button>
+  );
 }

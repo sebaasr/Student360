@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { GpaTrendChart } from "@/components/ui/Charts";
 
 interface SemesterGpa {
   term: string;
@@ -41,6 +42,14 @@ export function AcademicStandingCard({
           {academicStanding.replace("_", " ")}
         </Badge>
       </div>
+      {semesterGpas.length >= 2 && (
+        <div className="mb-3">
+          <div className="text-[10.5px] font-bold text-gray-500 uppercase tracking-wide mb-1">
+            GPA trend
+          </div>
+          <GpaTrendChart data={semesterGpas.map((g) => ({ term: g.term, gpa: g.gpa }))} />
+        </div>
+      )}
       {semesterGpas.length > 0 && (
         <div>
           <div className="text-[10.5px] font-bold text-gray-500 uppercase tracking-wide mb-1">
