@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -28,6 +28,8 @@ model Student {
   creditsAttempted    Int       @default(0)
   academicStanding    String    @default("good_standing")
   isFirstGeneration   Boolean   @default(false)
+  isTransfer          Boolean   @default(false)
+  transferCredits     Int       @default(0)
   isStudentAthlete    Boolean   @default(false)
   athleteSport        String?
   advisorId           String?

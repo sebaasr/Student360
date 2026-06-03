@@ -6,6 +6,9 @@ export interface RosterStudent {
   yearLevel: number;
   aoc: string | null;
   academicStanding: string;
+  isTransfer: boolean;
+  isStudentAthlete: boolean;
+  athleteSport: string | null;
   currentTermContract: {
     status: string;
     signedByStudent: boolean;

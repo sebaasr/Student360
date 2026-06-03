@@ -54,7 +54,15 @@ export function RosterRow({ student }: { student: RosterStudent }) {
 
         {/* Year · AOC */}
         <div className="col-span-2">
-          <div className="text-sm text-gray-800">{yearLabel(student.yearLevel)}</div>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-sm text-gray-800">{yearLabel(student.yearLevel)}</span>
+            {student.isTransfer && (
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200 font-medium">Transfer</span>
+            )}
+            {student.isStudentAthlete && student.athleteSport && (
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200 font-medium">{student.athleteSport}</span>
+            )}
+          </div>
           <div className="text-[11px] text-gray-400 truncate">{student.aoc ?? "Undeclared"}</div>
         </div>
 

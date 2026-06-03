@@ -90,6 +90,9 @@ export async function GET(req: NextRequest) {
       yearLevel: s.yearLevel,
       aoc: s.declaredAoc,
       academicStanding: s.academicStanding,
+      isTransfer: s.isTransfer,
+      isStudentAthlete: s.isStudentAthlete,
+      athleteSport: s.athleteSport,
       currentTermContract: contract
         ? {
             status: contract.status,

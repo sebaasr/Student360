@@ -376,6 +376,8 @@ async function main() {
     advisorId: facultyAdvisor.id,
     brightFuturesAward: null,
     brightFuturesActive: false,
+    isStudentAthlete: true,
+    athleteSport: "Swimming",
     degreeProgress: {
       aocName: "Mathematics",
       aocCreditRequired: 40,
@@ -539,6 +541,8 @@ async function main() {
     advisorId: facultyAdvisor.id,
     brightFuturesAward: "medallion_scholar",
     brightFuturesActive: true,
+    isTransfer: true,
+    transferCredits: 18,
     degreeProgress: {
       aocName: null,
       aocCreditRequired: 40,
@@ -629,6 +633,7 @@ interface SeedStudent {
   yearLevel: number; declaredAoc: string | null; cumulativeGpa: number | null;
   creditsEarned: number; creditsAttempted: number; academicStanding: string;
   advisorId: string | null; brightFuturesAward: string | null; brightFuturesActive: boolean;
+  isTransfer?: boolean; transferCredits?: number; isStudentAthlete?: boolean; athleteSport?: string | null;
   degreeProgress: SeedDegreeProgress; semesterGpas: SeedSemesterGpa[]; contract: SeedContract;
   advising: SeedAdvising[]; earlyAlerts?: SeedEarlyAlert[]; flags?: SeedFlag[];
   evaluations?: SeedEvaluation[]; tutoring?: SeedTutoring[]; sscVisits?: SeedSSCVisit[];
@@ -649,6 +654,8 @@ async function seedStudent(s: SeedStudent) {
       creditsEarned: s.creditsEarned, creditsAttempted: s.creditsAttempted,
       academicStanding: s.academicStanding, advisorId: s.advisorId,
       brightFuturesAward: s.brightFuturesAward, brightFuturesActive: s.brightFuturesActive,
+      isTransfer: s.isTransfer ?? false, transferCredits: s.transferCredits ?? 0,
+      isStudentAthlete: s.isStudentAthlete ?? false, athleteSport: s.athleteSport ?? null,
       bannerSyncedAt: new Date(),
     },
   });

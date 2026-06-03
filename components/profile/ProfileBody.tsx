@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { LensBar, type Lens } from "./LensBar";
 import { AcademicTimeline } from "./AcademicTimeline";
 import { OverallProgress } from "./OverallProgress";
@@ -28,6 +28,24 @@ const CURRENT_TERM_CODE = "202601";
 export function ProfileBody({ data }: Props) {
   const [lens, setLens] = useState<Lens>("since_entry");
 
+  // Build sorted term list from semester GPAs
+  const availableTerms: { code: string; label: string }[] = useMemo(() => {
+    const gpas: { termCode: string; term: string }[] = data.academic?.semesterGpas ?? [];
+    const seen = new Set<string>();
+    const terms: { code: string; label: string }[] = [];
+    for (const g of [...gpas].reverse()) {
+      if (!seen.has(g.termCode)) {
+        seen.add(g.termCode);
+        terms.push({ code: g.termCode, label: g.term });
+      }
+    }
+    if (!seen.has(CURRENT_TERM_CODE))
+      terms.unshift({ code: CURRENT_TERM_CODE, label: "Spring 2026 (current)" });
+    return terms;
+  }, [data.academic?.semesterGpas]);
+
+  const [selectedTerm, setSelectedTerm] = useState<string>(CURRENT_TERM_CODE);
+
   const allowed: string[] = data.allowedPanels ?? [];
   const has = (panel: string) => allowed.includes(panel);
   const hideLenses: Lens[] = [];
@@ -36,21 +54,34 @@ export function ProfileBody({ data }: Props) {
 
   return (
     <div className="space-y-4">
-      <LensBar active={lens} onChange={setLens} hideLenses={hideLenses} />
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <LensBar active={lens} onChange={setLens} hideLenses={hideLenses} />
+        {availableTerms.length > 1 && (
+          <select
+            value={selectedTerm}
+            onChange={(e) => setSelectedTerm(e.target.value)}
+            className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg bg-white text-gray-700 focus:ring-2 focus:ring-navy focus:border-navy"
+          >
+            {availableTerms.map((t) => (
+              <option key={t.code} value={t.code}>{t.label}</option>
+            ))}
+          </select>
+        )}
+      </div>
 
-      {lens === "since_entry" && <SinceEntryLens data={data} has={has} />}
-      {lens === "this_semester" && <ThisSemesterLens data={data} has={has} />}
-      {lens === "academic" && <AcademicLens data={data} has={has} />}
-      {lens === "advising" && <AdvisingLens data={data} has={has} />}
+      {lens === "since_entry" && <SinceEntryLens data={data} has={has} termCode={selectedTerm} />}
+      {lens === "this_semester" && <ThisSemesterLens data={data} has={has} termCode={selectedTerm} />}
+      {lens === "academic" && <AcademicLens data={data} has={has} termCode={selectedTerm} />}
+      {lens === "advising" && <AdvisingLens data={data} has={has} termCode={selectedTerm} />}
       {lens === "athletics" && <AthleticsLens data={data} has={has} />}
       {lens === "financial" && <FinancialLens data={data} has={has} />}
     </div>
   );
 }
 
-function SinceEntryLens({ data, has }: { data: any; has: (p: string) => boolean }) {
+function SinceEntryLens({ data, has, termCode }: { data: any; has: (p: string) => boolean; termCode: string }) {
   const currentContracts = (data.contracts ?? []).filter(
-    (c: any) => c.termCode === CURRENT_TERM_CODE,
+    (c: any) => c.termCode === termCode,
   );
 
   return (
@@ -104,16 +135,16 @@ function SinceEntryLens({ data, has }: { data: any; has: (p: string) => boolean 
   );
 }
 
-function ThisSemesterLens({ data, has }: { data: any; has: (p: string) => boolean }) {
+function ThisSemesterLens({ data, has, termCode }: { data: any; has: (p: string) => boolean; termCode: string }) {
   const currentContract = (data.contracts ?? []).filter(
-    (c: any) => c.termCode === CURRENT_TERM_CODE,
+    (c: any) => c.termCode === termCode,
   );
   const tutoringThis = (data.tutoring ?? []).filter(
-    (t: any) => t.termCode === CURRENT_TERM_CODE,
+    (t: any) => t.termCode === termCode,
   );
-  const sscThis = (data.sscVisits ?? []).filter((v: any) => v.termCode === CURRENT_TERM_CODE);
+  const sscThis = (data.sscVisits ?? []).filter((v: any) => v.termCode === termCode);
   const advThis = (data.advising ?? []).filter(
-    (a: any) => new Date(a.appointmentDate) >= startOfTerm(CURRENT_TERM_CODE),
+    (a: any) => new Date(a.appointmentDate) >= startOfTerm(termCode),
   );
 
   return (
@@ -147,7 +178,7 @@ function ThisSemesterLens({ data, has }: { data: any; has: (p: string) => boolea
   );
 }
 
-function AcademicLens({ data, has }: { data: any; has: (p: string) => boolean }) {
+function AcademicLens({ data, has, termCode: _termCode }: { data: any; has: (p: string) => boolean; termCode: string }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
       <div className="lg:col-span-2 space-y-4">
@@ -183,7 +214,7 @@ function AcademicLens({ data, has }: { data: any; has: (p: string) => boolean })
   );
 }
 
-function AdvisingLens({ data, has }: { data: any; has: (p: string) => boolean }) {
+function AdvisingLens({ data, has, termCode: _termCode }: { data: any; has: (p: string) => boolean; termCode: string }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
       {(has("advising") || has("advising_limited")) && (

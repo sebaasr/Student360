@@ -7,7 +7,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import type { RosterResponse, RosterStudent } from "@/types/student";
 import { yearLabel } from "@/lib/utils";
 
-type ViewKey = "all" | "attention" | "no_contract" | "not_met";
+type ViewKey = "all" | "attention" | "no_contract" | "not_met" | "athletes" | "transfers";
 
 export function RosterTable({
   initial,
@@ -21,6 +21,8 @@ export function RosterTable({
   const students = initial.students;
 
   // sidebar counts
+  const [sportFilter, setSportFilter] = useState<string>("all");
+
   const counts = useMemo(() => ({
     all: students.length,
     attention: students.filter((s) => s.priority === "high").length,
@@ -28,7 +30,18 @@ export function RosterTable({
       (s) => !s.currentTermContract || s.currentTermContract.status === "not_started",
     ).length,
     not_met: students.filter((s) => !s.lastAdvisingDate).length,
+    athletes: students.filter((s) => s.isStudentAthlete).length,
+    transfers: students.filter((s) => s.isTransfer).length,
   }), [students]);
+
+  const sportGroups = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const s of students.filter((s) => s.isStudentAthlete)) {
+      const key = s.athleteSport ?? "Unknown";
+      map.set(key, (map.get(key) ?? 0) + 1);
+    }
+    return [...map.entries()].sort((a, b) => b[1] - a[1]);
+  }, [students]);
 
   // AOC counts
   const aocGroups = useMemo(() => {
@@ -50,6 +63,12 @@ export function RosterTable({
         (s) => !s.currentTermContract || s.currentTermContract.status === "not_started",
       );
     else if (view === "not_met") list = list.filter((s) => !s.lastAdvisingDate);
+    else if (view === "athletes") list = list.filter((s) => s.isStudentAthlete);
+    else if (view === "transfers") list = list.filter((s) => s.isTransfer);
+
+    // sport filter (only applies within athletes view or independently)
+    if (sportFilter !== "all")
+      list = list.filter((s) => s.athleteSport === sportFilter);
 
     // year filter
     if (yearFilter !== "all") list = list.filter((s) => String(s.yearLevel) === yearFilter);
@@ -78,6 +97,8 @@ export function RosterTable({
     { key: "attention", label: "Needs Attention" },
     { key: "no_contract", label: "No Contract Yet" },
     { key: "not_met", label: "Not Met This Term" },
+    { key: "athletes", label: "Student-Athletes" },
+    { key: "transfers", label: "Transfer Students" },
   ];
 
   const years: { value: "1" | "2" | "3" | "4"; label: string }[] = [
@@ -162,6 +183,34 @@ export function RosterTable({
                   <span className="truncate">{aoc}</span>
                   <span className="text-xs text-gray-400 tabular-nums ml-2">{count}</span>
                 </div>
+              ))}
+            </nav>
+          </div>
+        )}
+
+        {/* By Sport */}
+        {sportGroups.length > 0 && (
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2 px-1">
+              By Sport
+            </p>
+            <nav className="space-y-0.5">
+              <button
+                onClick={() => { setSportFilter("all"); setView("athletes"); }}
+                className={`w-full flex items-center justify-between px-3 py-1.5 rounded-lg text-sm transition-colors text-left ${sportFilter === "all" && view === "athletes" ? "bg-navy/10 text-navy font-medium" : "text-gray-700 hover:bg-gray-100"}`}
+              >
+                <span>All athletes</span>
+                <span className="text-xs text-gray-400 tabular-nums">{counts.athletes}</span>
+              </button>
+              {sportGroups.map(([sport, count]) => (
+                <button
+                  key={sport}
+                  onClick={() => { setSportFilter(sport); setView("athletes"); }}
+                  className={`w-full flex items-center justify-between px-3 py-1.5 rounded-lg text-sm transition-colors text-left ${sportFilter === sport ? "bg-navy/10 text-navy font-medium" : "text-gray-700 hover:bg-gray-100"}`}
+                >
+                  <span className="truncate">{sport}</span>
+                  <span className="text-xs text-gray-400 tabular-nums ml-2">{count}</span>
+                </button>
               ))}
             </nav>
           </div>
