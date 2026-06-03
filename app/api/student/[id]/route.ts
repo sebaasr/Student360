@@ -26,7 +26,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       contracts: { orderBy: { termCode: "desc" }, include: { courses: true } },
       advisingRecords: { orderBy: { appointmentDate: "desc" }, take: 10 },
       earlyAlerts: { orderBy: { raisedAt: "desc" } },
-      evaluations: { orderBy: { termCode: "desc" }, take: 10 },
+      evaluations: { orderBy: { termCode: "desc" }, take: 50 },
       tutoringSessions: { orderBy: { sessionDate: "desc" }, take: 20 },
       sscVisits: { orderBy: { visitDate: "desc" }, take: 20 },
       academicCoach: true,

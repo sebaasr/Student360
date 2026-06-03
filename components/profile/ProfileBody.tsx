@@ -13,6 +13,7 @@ import { AcademicStandingCard } from "./AcademicStandingCard";
 import { ContractCard } from "./ContractCard";
 import { AdvisingHistoryCard } from "./AdvisingHistoryCard";
 import { EvaluationsCard } from "./EvaluationsCard";
+import { EvaluationsPanel } from "./EvaluationsPanel";
 import { TutoringCard } from "./TutoringCard";
 import { SSCVisitsCard } from "./SSCVisitsCard";
 import { AthleticsCard } from "./AthleticsCard";
@@ -51,6 +52,7 @@ export function ProfileBody({ data }: Props) {
   const hideLenses: Lens[] = [];
   if (!data.student.isStudentAthlete && !has("athletics")) hideLenses.push("athletics");
   if (!has("financial_flags") && !has("bright_futures")) hideLenses.push("financial");
+  if (!has("evaluations")) hideLenses.push("evaluations");
 
   return (
     <div className="space-y-4">
@@ -72,6 +74,7 @@ export function ProfileBody({ data }: Props) {
       {lens === "since_entry" && <SinceEntryLens data={data} has={has} termCode={selectedTerm} />}
       {lens === "this_semester" && <ThisSemesterLens data={data} has={has} termCode={selectedTerm} />}
       {lens === "academic" && <AcademicLens data={data} has={has} termCode={selectedTerm} />}
+      {lens === "evaluations" && <EvaluationsLens data={data} has={has} />}
       {lens === "advising" && <AdvisingLens data={data} has={has} termCode={selectedTerm} />}
       {lens === "athletics" && <AthleticsLens data={data} has={has} />}
       {lens === "financial" && <FinancialLens data={data} has={has} />}
@@ -216,6 +219,22 @@ function AcademicLens({ data, has, termCode: _termCode }: { data: any; has: (p: 
         )}
       </div>
     </div>
+  );
+}
+
+function EvaluationsLens({ data, has }: { data: any; has: (p: string) => boolean }) {
+  if (!has("evaluations")) {
+    return (
+      <div className="bg-white border border-gray-200 rounded-xl p-6 text-center text-gray-500 text-sm">
+        Narrative evaluations are not available at your access level.
+      </div>
+    );
+  }
+  return (
+    <EvaluationsPanel
+      evaluations={data.evaluations ?? []}
+      studentAoc={data.student.declaredAoc}
+    />
   );
 }
 
