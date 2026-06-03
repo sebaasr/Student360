@@ -30,10 +30,29 @@ h1, h2, .font-serif {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Tighter focus ring */
+/* Accessible focus ring for buttons/links — soft gold, follows rounded corners.
+   Form fields manage their own focus styling via Tailwind rings, so we suppress
+   the hard outline on them (it was showing as a dark rectangle on inputs). */
 :focus-visible {
-  outline: 2px solid var(--navy);
+  outline: 2px solid var(--gold);
   outline-offset: 2px;
+  border-radius: 6px;
+}
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+select:focus,
+select:focus-visible {
+  outline: none;
+}
+
+/* Ensure typed text is always visible (dark) and the caret too */
+input,
+textarea,
+select {
+  color: var(--text);
+  caret-color: var(--navy);
 }
 
 /* Consistent scrollbar */
