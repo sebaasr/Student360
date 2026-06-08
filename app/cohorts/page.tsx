@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { PageShell } from "@/components/layout/PageShell";
+import { CohortGrid, type CohortData } from "@/components/cohorts/CohortGrid";
 import type { RosterResponse, RosterStudent } from "@/types/student";
 
 async function fetchAllStudents(): Promise<RosterResponse> {
@@ -58,6 +58,20 @@ export default async function CohortsPage() {
 
   const roster = await fetchAllStudents();
 
+  const cohortData: CohortData[] = COHORTS.map((c) => ({
+    id: c.id,
+    label: c.label,
+    description: c.description,
+    members: roster.students.filter(c.filter).map((s) => ({
+      id: s.id,
+      name: s.name,
+      yearLevel: s.yearLevel,
+      aoc: s.aoc,
+      academicStanding: s.academicStanding,
+      priority: s.priority,
+    })),
+  }));
+
   return (
     <PageShell>
       <div className="max-w-7xl mx-auto p-6 space-y-4">
@@ -65,43 +79,11 @@ export default async function CohortsPage() {
           <div className="text-xs uppercase tracking-wide text-gray-500">Cohorts</div>
           <h1 className="text-xl font-bold text-navy">Segmented views of the college</h1>
           <p className="text-sm text-gray-600 mt-1">
-            Click a cohort to drill into its members. Counts reflect every student you have access to.
+            Click a cohort tile to see every student in that group. Counts reflect all students you
+            have access to.
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {COHORTS.map((c) => {
-            const members = roster.students.filter(c.filter);
-            return (
-              <div key={c.id} className="bg-white border border-gray-200 rounded-xl p-4">
-                <div className="flex items-baseline justify-between">
-                  <h2 className="text-base font-semibold text-navy">{c.label}</h2>
-                  <span className="text-2xl font-bold text-navy">{members.length}</span>
-                </div>
-                <p className="text-xs text-gray-500 mt-1 mb-3">{c.description}</p>
-                <div className="space-y-1">
-                  {members.slice(0, 4).map((s) => (
-                    <Link
-                      key={s.id}
-                      href={`/student/${s.id}`}
-                      className="block text-sm py-1 px-2 -mx-2 rounded hover:bg-gray-50 truncate"
-                    >
-                      {s.name}{" "}
-                      <span className="text-[11px] text-gray-400">· {s.id}</span>
-                    </Link>
-                  ))}
-                  {members.length > 4 && (
-                    <div className="text-[11px] text-gray-400 pl-2">
-                      + {members.length - 4} more
-                    </div>
-                  )}
-                  {members.length === 0 && (
-                    <div className="text-[11px] text-gray-400 italic">No students match yet.</div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        <CohortGrid cohorts={cohortData} />
       </div>
     </PageShell>
   );

@@ -1,5 +1,5 @@
 import { ThermometerBar } from "@/components/ui/ThermometerBar";
-import { ISPPips } from "@/components/ui/ISPPips";
+import { ISPPips, type ISPInfo } from "@/components/ui/ISPPips";
 import {
   buildGraduationTracker,
   semestersRemaining,
@@ -7,20 +7,36 @@ import {
 } from "@/lib/graduation-tracker";
 
 interface Props {
-  degreeProgress: DegreeProgressLike | null;
+  degreeProgress: (DegreeProgressLike & { ispRecords?: ISPInfo[] }) | null;
   creditsEarned: number;
   yearLevel: number;
+  onOpenSinceEntry?: () => void;
 }
 
-export function GraduationTracker({ degreeProgress, creditsEarned, yearLevel }: Props) {
+export function GraduationTracker({ degreeProgress, creditsEarned, yearLevel, onOpenSinceEntry }: Props) {
   const semRem = semestersRemaining(yearLevel);
   const bars = buildGraduationTracker(degreeProgress, creditsEarned, semRem);
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-4">
-      <h3 className="text-[10.5px] font-bold text-gray-500 uppercase tracking-wide mb-3">
-        Graduation Progress
-      </h3>
+      {onOpenSinceEntry ? (
+        <button
+          onClick={onOpenSinceEntry}
+          className="group flex items-center gap-1.5 mb-3"
+          title="View engagement since entry"
+        >
+          <span className="text-[10.5px] font-bold text-gray-500 group-hover:text-navy uppercase tracking-wide transition-colors">
+            Graduation Progress
+          </span>
+          <span className="text-[10px] text-navy/50 group-hover:text-navy transition-colors">
+            Since entry →
+          </span>
+        </button>
+      ) : (
+        <h3 className="text-[10.5px] font-bold text-gray-500 uppercase tracking-wide mb-3">
+          Graduation Progress
+        </h3>
+      )}
       <div className="divide-y divide-gray-50">
         {bars.map((b) =>
           b.displayType === "pips" ? (
@@ -34,6 +50,7 @@ export function GraduationTracker({ degreeProgress, creditsEarned, yearLevel }: 
                   completed={b.current}
                   required={b.total}
                   semestersRemaining={semRem}
+                  isps={degreeProgress?.ispRecords ?? []}
                 />
               </div>
             </div>

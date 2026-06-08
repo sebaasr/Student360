@@ -26,6 +26,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       contracts: { orderBy: { termCode: "desc" }, include: { courses: true } },
       advisingRecords: { orderBy: { appointmentDate: "desc" }, take: 10 },
       earlyAlerts: { orderBy: { raisedAt: "desc" } },
+      msprs: { orderBy: { termCode: "desc" }, take: 30 },
       evaluations: { orderBy: { termCode: "desc" }, take: 50 },
       tutoringSessions: { orderBy: { sessionDate: "desc" }, take: 20 },
       sscVisits: { orderBy: { visitDate: "desc" }, take: 20 },
@@ -187,6 +188,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       noteText: canViewPanel(tier, "advising") ? a.noteText : null,
     }));
     payload.earlyAlerts = student.earlyAlerts;
+    payload.msprs = student.msprs;
   }
   if (canViewPanel(tier, "evaluations")) {
     payload.evaluations = student.evaluations;

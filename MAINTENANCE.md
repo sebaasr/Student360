@@ -218,8 +218,8 @@ Student 360 is a **read-only mirror** — it never writes back to any source sys
 | Degree progress, ISPs, minors, thesis | DegreeWorks (Ellucian) | Weekly (Sundays) |
 | Advising records, early alerts | Navigate 360 (EAB) | Nightly |
 | Tutoring sessions, no-shows | Knack | Nightly |
-| SSC visits, academic coach | Knack | Nightly |
-| Narrative evaluations | NCF Evaluations System | Nightly |
+| SSC visits, academic coach | Banner (Ellucian) | Weekly (Sundays) |
+| Narrative evaluations | NCF Evaluations System | Weekly (Sundays) |
 | Predictive insights | Computed internally | After each nightly sync |
 
 If data looks wrong in Student 360, the fix should be made in the **source system**, not in Student 360. The next sync will pick it up.

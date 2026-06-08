@@ -44,6 +44,13 @@ export interface RequirementCallout {
   detail: string;
 }
 
+import {
+  coursesForAoc,
+  disciplineFromAoc,
+  NCF_GEN_ED,
+  type CatalogCourse,
+} from "./ncf-catalog";
+
 export interface SuggestedCourse {
   courseCode: string;
   courseTitle: string;
@@ -325,24 +332,41 @@ export function buildSuggestedCourses(
   const out: SuggestedCourse[] = [];
   if (!dp) return out;
 
-  // 1. AOC gap → suggest an upper-division AOC course.
+  // 1. AOC gap → suggest real NCF catalog courses for the student's discipline,
+  //    matched to their year level (intro for early years, advanced for later).
   const aocGap = (dp.aocCreditRequired ?? 0) - (dp.aocCreditCompleted ?? 0);
   if (dp.aocName && aocGap > 0) {
-    out.push({
-      courseCode: aocCode(dp.aocName),
-      courseTitle: `${dp.aocName} Seminar (advanced)`,
-      reason: `Closes ${Math.min(4, aocGap)} of ${aocGap} AOC credits still required.`,
-      category: "AOC",
-    });
+    const catalog = coursesForAoc(dp.aocName);
+    const wantLevel: CatalogCourse["level"] =
+      student.yearLevel >= 3 ? "advanced" : student.yearLevel === 2 ? "intermediate" : "intro";
+    const matches = catalog.filter((c) => c.level === wantLevel);
+    const picks = (matches.length ? matches : catalog).slice(0, 2);
+    for (const c of picks) {
+      out.push({
+        courseCode: c.code,
+        courseTitle: c.title,
+        reason: `${disciplineFromAoc(dp.aocName)} AOC — ${aocGap} credits still required. (NCF Catalog 2025-26)`,
+        category: "AOC",
+      });
+    }
+    if (picks.length === 0) {
+      out.push({
+        courseCode: aocCode(dp.aocName),
+        courseTitle: `${dp.aocName} advanced seminar`,
+        reason: `Closes ${Math.min(4, aocGap)} of ${aocGap} AOC credits still required.`,
+        category: "AOC",
+      });
+    }
   }
 
-  // 2. Gen Ed gap → suggest a remaining gen-ed.
+  // 2. Gen Ed gap → suggest a real foundational course from the catalog.
   const genEdGap = (dp.genEdRequired ?? 0) - (dp.genEdCompleted ?? 0);
   if (genEdGap > 0) {
+    const ge = NCF_GEN_ED[0];
     out.push({
-      courseCode: "GEN ED",
-      courseTitle: genEdGap >= 2 ? "Quantitative Reasoning + Lab Science" : "Remaining gen-ed",
-      reason: `${genEdGap} general-education requirement${genEdGap > 1 ? "s" : ""} outstanding.`,
+      courseCode: genEdGap >= 4 ? ge.code : "GEN ED",
+      courseTitle: genEdGap >= 4 ? ge.title : "Remaining general-education requirement",
+      reason: `${genEdGap} general-education requirement${genEdGap > 1 ? "s" : ""} outstanding. (NCF Catalog 2025-26)`,
       category: "Gen Ed",
     });
   }

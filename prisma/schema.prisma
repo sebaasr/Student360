@@ -46,6 +46,7 @@ model Student {
   degreeProgress     DegreeProgress?
   advisingRecords    AdvisingRecord[]
   earlyAlerts        EarlyAlert[]
+  msprs              MSPR[]
   evaluations        Evaluation[]
   tutoringSessions   TutoringSession[]
   sscVisits          SSCVisit[]
@@ -213,6 +214,28 @@ model EarlyAlert {
 
   @@index([studentId])
   @@index([status])
+}
+
+// Mid-Semester Progress Report — instructor-submitted feedback via Navigate 360
+model MSPR {
+  id             String    @id @default(cuid())
+  studentId      String
+  term           String
+  termCode       String
+  courseCode     String
+  courseTitle    String
+  instructorName String
+  rating         String    // e.g. "satisfactory", "concern", "at_risk"
+  attendance     String?   // "good", "irregular", "poor"
+  feedback       String?
+  submittedAt    DateTime
+  navigateId     String?   @unique
+  syncedAt       DateTime?
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@index([termCode])
 }
 
 // ══════════════════════════════════════════

@@ -35,7 +35,7 @@ async function main() {
     email: "theo.nakamura@ncf.edu", yearLevel: 4,
     declaredAoc: "Natural Sciences (Biology)", cumulativeGpa: 3.85,
     creditsEarned: 102, creditsAttempted: 102, academicStanding: "good_standing",
-    advisorId: fac.id, brightFuturesAward: "academic_scholar", brightFuturesActive: true,
+    advisorId: advisor.id, brightFuturesAward: "academic_scholar", brightFuturesActive: true,
     degreeProgress: {
       aocName: "Biology", aocCreditRequired: 40, aocCreditCompleted: 36, aocPercentComplete: 0.9,
       genEdRequired: 20, genEdCompleted: 20, ispsRequired: 3, ispsCompleted: 2,
@@ -123,7 +123,7 @@ async function main() {
     email: "ava.thornton@ncf.edu", yearLevel: 3,
     declaredAoc: "Humanities (Literature)", cumulativeGpa: 3.72,
     creditsEarned: 78, creditsAttempted: 78, academicStanding: "good_standing",
-    advisorId: fac.id, brightFuturesAward: "academic_scholar", brightFuturesActive: true,
+    advisorId: advisor.id, brightFuturesAward: "academic_scholar", brightFuturesActive: true,
     degreeProgress: {
       aocName: "Literature", aocCreditRequired: 36, aocCreditCompleted: 22, aocPercentComplete: 0.61,
       genEdRequired: 20, genEdCompleted: 18, ispsRequired: 3, ispsCompleted: 1,
@@ -196,7 +196,7 @@ async function main() {
     email: "maya.chen@ncf.edu", yearLevel: 4,
     declaredAoc: "Social Sciences (Psychology)", cumulativeGpa: 3.05,
     creditsEarned: 96, creditsAttempted: 102, academicStanding: "good_standing",
-    advisorId: fac.id, brightFuturesAward: "academic_scholar", brightFuturesActive: true,
+    advisorId: advisor.id, brightFuturesAward: "academic_scholar", brightFuturesActive: true,
     degreeProgress: {
       aocName: "Psychology", aocCreditRequired: 40, aocCreditCompleted: 30, aocPercentComplete: 0.75,
       genEdRequired: 20, genEdCompleted: 18, ispsRequired: 3, ispsCompleted: 2,
@@ -268,6 +268,9 @@ async function main() {
       { date: new Date("2026-02-05"), visitType: "scheduled", serviceType: "Academic Skills", staffName: "Coach Rivera", notes: "Study strategies and workload planning for thesis semester.", termCode: "202601" },
     ],
     academicCoach: { coachName: "Coach Rivera", coachEmail: "arivera@ncf.edu", assignedAt: new Date("2026-01-15") },
+    msprs: [
+      { term: "Spring 2026", termCode: "202601", courseCode: "PSYC 410", courseTitle: "Clinical Practicum", instructorName: "Dr. Reyes", rating: "concern", attendance: "irregular", feedback: "Maya is capable but has missed two practicum sessions. Engagement is inconsistent. Recommend an advising check-in before the withdrawal deadline.", submittedAt: new Date("2026-03-02") },
+    ],
     insights: [
       { insightType: "risk", insightCode: "thesis_timeline", title: "Senior without a thesis sponsor identified", body: "Maya is a senior and has not yet identified a thesis sponsor. This should be addressed immediately.", subtext: "Thesis status: Not started", ctaText: "→ Connect Maya with Dr. Reyes or Dr. Almeida", severity: "urgent" },
       { insightType: "risk", insightCode: "gpa_trend", title: "GPA declining over the last 3 semesters", body: "GPA has trended 3.4 → 3.1 → 2.9. Monitor course load and check in on stressors.", subtext: "Current: 2.90 · Threshold: 2.0", ctaText: "→ Discuss course load and support access", severity: "warning" },
@@ -280,7 +283,7 @@ async function main() {
     email: "dylan.osei@ncf.edu", yearLevel: 3,
     declaredAoc: "Natural Sciences (Mathematics)", cumulativeGpa: 3.4,
     creditsEarned: 72, creditsAttempted: 72, academicStanding: "good_standing",
-    advisorId: fac.id, brightFuturesAward: null, brightFuturesActive: false,
+    advisorId: advisor.id, brightFuturesAward: null, brightFuturesActive: false,
     isStudentAthlete: true, athleteSport: "Swimming",
     athletics: {
       sport: "Swimming", eligibilityStatus: "eligible", gpaRequired: 2.0, creditLoadRequired: 12,
@@ -347,7 +350,7 @@ async function main() {
     id: "N2024-0087", firstName: "Jordan", lastName: "Reyes", preferredName: null,
     email: "jordan.reyes@ncf.edu", yearLevel: 2,
     declaredAoc: null, cumulativeGpa: 1.9, creditsEarned: 22, creditsAttempted: 30,
-    academicStanding: "academic_probation", advisorId: fac.id,
+    academicStanding: "academic_probation", advisorId: advisor.id,
     brightFuturesAward: "academic_scholar", brightFuturesActive: true,
     degreeProgress: {
       aocName: null, aocCreditRequired: 40, aocCreditCompleted: 0, aocPercentComplete: 0,
@@ -392,7 +395,7 @@ async function main() {
     id: "N2025-0008", firstName: "Sofia", lastName: "Martínez", preferredName: "Sofi",
     email: "sofia.martinez@ncf.edu", yearLevel: 1,
     declaredAoc: null, cumulativeGpa: 3.6, creditsEarned: 14, creditsAttempted: 14,
-    academicStanding: "good_standing", advisorId: fac.id,
+    academicStanding: "good_standing", advisorId: advisor.id,
     brightFuturesAward: "medallion_scholar", brightFuturesActive: true,
     isTransfer: true, transferCredits: 18,
     degreeProgress: {
@@ -437,7 +440,7 @@ async function main() {
     email: "marcus.rivera@ncf.edu", yearLevel: 3,
     declaredAoc: "Social Sciences (Political Science)", cumulativeGpa: 3.2,
     creditsEarned: 70, creditsAttempted: 72, academicStanding: "good_standing",
-    advisorId: fac.id, brightFuturesAward: "medallion_scholar", brightFuturesActive: true,
+    advisorId: advisor.id, brightFuturesAward: "medallion_scholar", brightFuturesActive: true,
     isStudentAthlete: true, athleteSport: "Soccer",
     athletics: {
       sport: "Soccer", eligibilityStatus: "eligible", gpaRequired: 2.0, creditLoadRequired: 12,
@@ -513,7 +516,7 @@ async function main() {
     email: "priya.nair@ncf.edu", yearLevel: 2,
     declaredAoc: "Natural Sciences (Environmental Science)", cumulativeGpa: 3.5,
     creditsEarned: 30, creditsAttempted: 30, academicStanding: "good_standing",
-    advisorId: fac.id, brightFuturesAward: "academic_scholar", brightFuturesActive: true,
+    advisorId: advisor.id, brightFuturesAward: "academic_scholar", brightFuturesActive: true,
     isStudentAthlete: true, athleteSport: "Softball",
     athletics: {
       sport: "Softball", eligibilityStatus: "eligible", gpaRequired: 2.0, creditLoadRequired: 12,
@@ -574,7 +577,7 @@ async function main() {
     email: "jake.thompson@ncf.edu", yearLevel: 4,
     declaredAoc: "Humanities (History)", cumulativeGpa: 2.1,
     creditsEarned: 98, creditsAttempted: 108, academicStanding: "academic_warning",
-    advisorId: fac.id, brightFuturesAward: null, brightFuturesActive: false,
+    advisorId: advisor.id, brightFuturesAward: null, brightFuturesActive: false,
     isStudentAthlete: true, athleteSport: "Baseball",
     athletics: {
       sport: "Baseball", eligibilityStatus: "at_risk", gpaRequired: 2.0, creditLoadRequired: 12,
@@ -663,6 +666,10 @@ async function main() {
       { date: new Date("2026-01-30"), visitType: "scheduled", serviceType: "Academic Skills", staffName: "Coach Rivera", notes: "Thesis time management and eligibility monitoring.", termCode: "202601" },
     ],
     academicCoach: { coachName: "Coach Rivera", coachEmail: "arivera@ncf.edu", assignedAt: new Date("2025-01-14") },
+    msprs: [
+      { term: "Spring 2026", termCode: "202601", courseCode: "HIST 430", courseTitle: "Senior Seminar", instructorName: "Dr. Almeida", rating: "at_risk", attendance: "irregular", feedback: "Jake's thesis progress is behind schedule and seminar attendance has slipped. Given the eligibility situation, immediate intervention is warranted.", submittedAt: new Date("2026-03-04") },
+      { term: "Spring 2026", termCode: "202601", courseCode: "THESIS", courseTitle: "Senior Thesis", instructorName: "Dr. Almeida", rating: "concern", attendance: "good", feedback: "Engaged in meetings but written output is behind the expected milestone for this point in the term.", submittedAt: new Date("2026-03-04") },
+    ],
     insights: [
       { insightType: "risk", insightCode: "athletics_eligibility", title: "Baseball eligibility at risk — GPA 0.10 above minimum", body: "Jake's cumulative GPA (2.10) is just above the 2.0 NAIA Sun Conference eligibility threshold. Three consecutive semesters of decline. Any further drop triggers ineligibility.", subtext: "Current GPA: 2.10 · Minimum: 2.00 · Buffer: +0.10", ctaText: "→ Coordinate with Athletics FAR · Monitor midterm performance", severity: "urgent" },
       { insightType: "risk", insightCode: "gpa_trend", title: "GPA declining for 4 consecutive semesters", body: "GPA trend: 3.2 → 2.8 → 2.5 → 2.3 → 2.0 → 1.8 → 2.1. Pattern suggests persistent difficulty. Thesis semester adds significant workload.", subtext: "Current: 2.10 · Threshold: 2.0", ctaText: "→ Increase tutoring frequency · Weekly check-ins", severity: "warning" },
@@ -675,7 +682,7 @@ async function main() {
     email: "emma.walsh@ncf.edu", yearLevel: 3,
     declaredAoc: "Natural Sciences (Chemistry)", cumulativeGpa: 3.9,
     creditsEarned: 76, creditsAttempted: 76, academicStanding: "good_standing",
-    advisorId: fac.id, brightFuturesAward: "academic_scholar", brightFuturesActive: true,
+    advisorId: advisor.id, brightFuturesAward: "academic_scholar", brightFuturesActive: true,
     isStudentAthlete: true, athleteSport: "Tennis",
     athletics: {
       sport: "Tennis", eligibilityStatus: "eligible", gpaRequired: 2.0, creditLoadRequired: 12,
@@ -747,10 +754,187 @@ async function main() {
     ],
   });
 
+  // ── Bulk synthetic students for scale testing (~250/year → ~1000) ──────────
+  // A few are assigned as advisees so each demo account has a realistic caseload
+  // (mlopezzafra: 10 heroes + 5 = 15; faculty: 15). The rest are unassigned and
+  // appear only in "All Students".
+  const bulkCount = await generateBulkStudents(250, { provostId: advisor.id, facultyId: fac.id });
+
   console.log("Seed complete.");
   console.log(`  Advisor: ${advisor.email} (tier ${advisor.accessTier})`);
   console.log(`  Faculty: ${fac.email} (tier ${fac.accessTier})`);
-  console.log(`  10 students seeded: Theo, Ava, Maya, Dylan, Jordan, Sofia, Marcus, Priya, Jake, Emma`);
+  console.log(`  10 hero students + ${bulkCount} generated = ${10 + bulkCount} total`);
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// Bulk generator — efficient createMany with self-assigned IDs (no per-row await)
+// ════════════════════════════════════════════════════════════════════════════
+
+const FIRST_NAMES = [
+  "Liam","Olivia","Noah","Emma","Oliver","Ava","Elijah","Sophia","Mateo","Isabella",
+  "Lucas","Mia","Levi","Amelia","Asher","Harper","James","Evelyn","Leo","Luna",
+  "Ezra","Camila","Aiden","Gianna","Sebastian","Elena","Daniel","Layla","Michael","Nora",
+  "Kai","Zoe","Omar","Aaliyah","Andre","Priya","Diego","Maya","Tariq","Sofia",
+  "Hana","Yuki","Ravi","Nina","Marcus","Aisha","Felix"," Imani","Theo","Carmen",
+  "Jamal","Lucia","Wei","Anya","Kofi","Esperanza","Dmitri","Fatima","Sven","Rosa",
+];
+const LAST_NAMES = [
+  "Smith","Johnson","Williams","Brown","Jones","Garcia","Martinez","Davis","Rodriguez","Lopez",
+  "Gonzalez","Wilson","Anderson","Thomas","Taylor","Moore","Jackson","Martin","Lee","Perez",
+  "Thompson","White","Harris","Sanchez","Clark","Ramirez","Lewis","Robinson","Walker","Young",
+  "Allen","King","Wright","Scott","Torres","Nguyen","Hill","Flores","Green","Adams",
+  "Nakamura","Okafor","Patel","Cohen","Rossi","Kim","Mbeki","Haddad","Andersson","Reyes",
+];
+const AOCS = [
+  "Natural Sciences (Biology)","Natural Sciences (Chemistry)","Natural Sciences (Physics)",
+  "Natural Sciences (Mathematics)","Natural Sciences (Environmental Science)",
+  "Humanities (Literature)","Humanities (History)","Humanities (Philosophy)","Humanities (Art History)",
+  "Social Sciences (Psychology)","Social Sciences (Political Science)","Social Sciences (Economics)",
+  "Social Sciences (Anthropology)","Social Sciences (Sociology)",
+];
+const SPORTS = ["Soccer","Baseball","Softball","Tennis","Swimming","Basketball","Cross Country","Volleyball","Golf"];
+
+// Deterministic PRNG so reseeds are stable.
+let _seed = 123456789;
+function rnd(): number {
+  _seed = (_seed * 1103515245 + 12345) & 0x7fffffff;
+  return _seed / 0x7fffffff;
+}
+function pick<T>(arr: T[]): T { return arr[Math.floor(rnd() * arr.length)]; }
+function range(min: number, max: number): number { return min + rnd() * (max - min); }
+
+const HERO_IDS = [
+  "N2022-0034","N2022-0091","N2023-0012","N2023-0055","N2023-0101",
+  "N2023-0179","N2023-0221","N2024-0087","N2024-0156","N2025-0008",
+];
+
+async function generateBulkStudents(
+  perYear: number,
+  advisors: { provostId: string; facultyId: string },
+): Promise<number> {
+  // Idempotent: remove any previously generated students (cascades to children),
+  // leaving the 10 hand-crafted hero students intact.
+  await prisma.student.deleteMany({ where: { id: { notIn: HERO_IDS } } });
+
+  // Assign the first few generated students as advisees so each demo account
+  // has a realistic caseload. The 10 heroes already belong to the provost.
+  let assignedProvost = 0; // target 5 (→ 15 with heroes)
+  let assignedFaculty = 0; // target 15
+
+  const students: any[] = [];
+  const semGpas: any[] = [];
+  const degreeProgress: any[] = [];
+  const athletics: any[] = [];
+  const contracts: any[] = [];
+  const insights: any[] = [];
+
+  let counter = 1000; // start high to avoid colliding with hero IDs
+
+  for (let yearLevel = 1; yearLevel <= 4; yearLevel++) {
+    const enrollYear = 2026 - yearLevel; // senior→2022 … first-year→2025
+    for (let i = 0; i < perYear; i++) {
+      counter++;
+      const id = `N${enrollYear}-${counter}`;
+      const firstName = pick(FIRST_NAMES).trim();
+      const lastName = pick(LAST_NAMES);
+      const isAthlete = rnd() < 0.15;
+      const isTransfer = !isAthlete && rnd() < 0.12 && yearLevel <= 3;
+
+      // GPA weighted toward 2.8–3.8
+      let gpa = Math.round(range(1.5, 4.0) * 100) / 100;
+      if (rnd() < 0.6) gpa = Math.round(range(2.8, 3.9) * 100) / 100;
+      const standing = gpa < 1.9 ? "academic_probation" : gpa < 2.2 ? "academic_warning" : "good_standing";
+
+      const creditsEarned = Math.min(120, Math.round((yearLevel - 1) * 30 + range(4, 28)));
+      const aoc = yearLevel >= 2 ? pick(AOCS) : (rnd() < 0.4 ? pick(AOCS) : null);
+      const sport = isAthlete ? pick(SPORTS) : null;
+      const bfAward = rnd() < 0.4 ? pick(["academic_scholar", "medallion_scholar"]) : null;
+
+      // Assign a small caseload to each demo account; everyone else unassigned.
+      let assigned: string | null = null;
+      if (assignedProvost < 5) { assigned = advisors.provostId; assignedProvost++; }
+      else if (assignedFaculty < 15) { assigned = advisors.facultyId; assignedFaculty++; }
+
+      students.push({
+        id, firstName, lastName, preferredName: null,
+        email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}${counter}@ncf.edu`,
+        enrollmentStatus: "full-time", yearLevel, declaredAoc: aoc,
+        cumulativeGpa: gpa, creditsEarned, creditsAttempted: creditsEarned + Math.round(range(0, 8)),
+        academicStanding: standing, advisorId: assigned,
+        brightFuturesAward: bfAward, brightFuturesActive: bfAward !== null,
+        isTransfer, transferCredits: isTransfer ? Math.round(range(12, 30)) : 0,
+        isStudentAthlete: isAthlete, athleteSport: sport,
+        bannerSyncedAt: new Date(),
+      });
+
+      // Semester GPAs (2 per completed year)
+      const numTerms = yearLevel * 2 - 1;
+      for (let t = 0; t < numTerms; t++) {
+        const yr = enrollYear + Math.floor(t / 2);
+        const isFall = t % 2 === 0;
+        const termCode = `${yr}${isFall ? "09" : "01"}`;
+        const termGpa = Math.max(0.5, Math.min(4.0, Math.round((gpa + range(-0.4, 0.4)) * 100) / 100));
+        semGpas.push({
+          studentId: id, term: term(termCode), termCode,
+          gpa: termGpa, credits: Math.round(range(12, 16)),
+          standing: termGpa < 1.9 ? "academic_probation" : termGpa < 2.2 ? "academic_warning" : "good_standing",
+        });
+      }
+
+      // Degree progress
+      const aocPct = Math.min(1, creditsEarned / 120 + range(-0.1, 0.1));
+      degreeProgress.push({
+        studentId: id, aocName: aoc ? aoc.replace(/^.*\((.*)\)$/, "$1") : null,
+        aocCreditRequired: 40, aocCreditCompleted: Math.round(aocPct * 40),
+        aocPercentComplete: Math.round(aocPct * 100) / 100,
+        genEdRequired: 20, genEdCompleted: Math.min(20, Math.round(yearLevel * 5 + range(0, 4))),
+        ispsRequired: 3, ispsCompleted: Math.min(3, Math.max(0, yearLevel - 1)),
+        thesisStatus: yearLevel === 4 ? pick(["not_started", "sponsor_identified", "in_progress"]) : "not_started",
+        thesisSponsor: null, totalCreditsRequired: 120, totalCreditsEarned: creditsEarned,
+        onTrackForGraduation: standing === "good_standing", syncedAt: new Date(),
+      });
+
+      // Athletics record
+      if (isAthlete) {
+        athletics.push({
+          studentId: id, sport: sport!, gpaRequired: 2.0, creditLoadRequired: 12,
+          eligibilityStatus: gpa < 2.3 ? "at_risk" : "eligible",
+          semesterCertHistory: "[]",
+          farNotes: gpa < 2.3 ? "GPA near the 2.0 NAIA Sun Conference eligibility threshold. Monitor closely." : "Meets all NAIA Sun Conference eligibility requirements.",
+          syncedAt: new Date(),
+        });
+      }
+
+      // Current-term contract
+      const cStatus = pick(["signed", "signed", "signed", "in_progress", "pending_advisor", "not_started"]);
+      contracts.push({
+        id: `c_${id}_202601`, studentId: id, term: "Spring 2026", termCode: "202601",
+        status: cStatus, signedByStudent: cStatus !== "not_started",
+        signedByAdvisor: cStatus === "signed", totalCredits: cStatus === "not_started" ? 0 : Math.round(range(12, 16)),
+        syncedAt: new Date(),
+      });
+
+      // At-risk insight
+      if (standing === "academic_probation") {
+        insights.push({
+          studentId: id, insightType: "risk", insightCode: "gpa_trend",
+          title: "GPA below good-standing threshold", body: `Cumulative GPA ${gpa.toFixed(2)} places this student on academic probation.`,
+          subtext: `Current: ${gpa.toFixed(2)} · Threshold: 2.00`, ctaText: "→ Review support access and course load",
+          severity: "urgent",
+        });
+      }
+    }
+  }
+
+  // Bulk insert in dependency order
+  await prisma.student.createMany({ data: students });
+  await prisma.semesterGpa.createMany({ data: semGpas });
+  await prisma.degreeProgress.createMany({ data: degreeProgress });
+  if (athletics.length) await prisma.athleticsRecord.createMany({ data: athletics });
+  await prisma.contract.createMany({ data: contracts });
+  if (insights.length) await prisma.predictiveInsight.createMany({ data: insights });
+
+  return students.length;
 }
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -772,6 +956,7 @@ interface SeedAdvising { advisorName: string; date: Date; duration: number; meet
 interface SeedEarlyAlert { alertType: string; raisedBy: string; raisedAt: Date; status: string; notes?: string }
 interface SeedFlag { flagType: string; isActive: boolean; addedAt: Date }
 interface SeedEval { instructorName: string; courseCode: string; courseTitle: string; term: string; termCode: string; text: string; status: string; submittedAt: Date }
+interface SeedMSPR { term: string; termCode: string; courseCode: string; courseTitle: string; instructorName: string; rating: string; attendance?: string; feedback?: string; submittedAt: Date }
 interface SeedTutoring { date: Date; durationMins: number; subject: string; courseCode?: string; tutorName?: string; sessionType: string; termCode: string }
 interface SeedSSC { date: Date; visitType: string; serviceType: string; staffName?: string; notes?: string; termCode: string }
 interface SeedCoach { coachName: string; coachEmail?: string; assignedAt?: Date }
@@ -786,7 +971,7 @@ interface SeedStudent {
   isTransfer?: boolean; transferCredits?: number; isStudentAthlete?: boolean; athleteSport?: string | null;
   degreeProgress: SeedDegreeProgress; semesterGpas: SeedSemesterGpa[];
   contracts: SeedContract[]; advising: SeedAdvising[];
-  earlyAlerts?: SeedEarlyAlert[]; flags?: SeedFlag[];
+  earlyAlerts?: SeedEarlyAlert[]; flags?: SeedFlag[]; msprs?: SeedMSPR[];
   evaluations?: SeedEval[]; tutoring?: SeedTutoring[]; sscVisits?: SeedSSC[];
   academicCoach?: SeedCoach; athletics?: SeedAthletics; insights: SeedInsight[];
 }
@@ -860,6 +1045,10 @@ async function seedStudent(s: SeedStudent) {
   await prisma.earlyAlert.deleteMany({ where: { studentId: s.id } });
   if (s.earlyAlerts?.length)
     await prisma.earlyAlert.createMany({ data: s.earlyAlerts.map((a) => ({ studentId: s.id, alertType: a.alertType, raisedBy: a.raisedBy, raisedAt: a.raisedAt, status: a.status, notes: a.notes ?? null, syncedAt: new Date() })) });
+
+  await prisma.mSPR.deleteMany({ where: { studentId: s.id } });
+  if (s.msprs?.length)
+    await prisma.mSPR.createMany({ data: s.msprs.map((m) => ({ studentId: s.id, term: m.term, termCode: m.termCode, courseCode: m.courseCode, courseTitle: m.courseTitle, instructorName: m.instructorName, rating: m.rating, attendance: m.attendance ?? null, feedback: m.feedback ?? null, submittedAt: m.submittedAt, syncedAt: new Date() })) });
 
   await prisma.financialFlag.deleteMany({ where: { studentId: s.id } });
   if (s.flags?.length)

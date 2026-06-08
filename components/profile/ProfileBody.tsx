@@ -12,6 +12,7 @@ import { BrightFuturesCard } from "./BrightFuturesCard";
 import { AcademicStandingCard } from "./AcademicStandingCard";
 import { ContractCard } from "./ContractCard";
 import { AdvisingHistoryCard } from "./AdvisingHistoryCard";
+import { MSPRCard } from "./MSPRCard";
 import { EvaluationsCard } from "./EvaluationsCard";
 import { EvaluationsPanel } from "./EvaluationsPanel";
 import { TutoringCard } from "./TutoringCard";
@@ -73,7 +74,7 @@ export function ProfileBody({ data }: Props) {
 
       {lens === "since_entry" && <SinceEntryLens data={data} has={has} termCode={selectedTerm} />}
       {lens === "this_semester" && <ThisSemesterLens data={data} has={has} termCode={selectedTerm} />}
-      {lens === "academic" && <AcademicLens data={data} has={has} termCode={selectedTerm} />}
+      {lens === "academic" && <AcademicLens data={data} has={has} termCode={selectedTerm} onLens={setLens} />}
       {lens === "evaluations" && <EvaluationsLens data={data} has={has} />}
       {lens === "advising" && <AdvisingLens data={data} has={has} termCode={selectedTerm} />}
       {lens === "athletics" && <AthleticsLens data={data} has={has} />}
@@ -97,11 +98,22 @@ function SinceEntryLens({ data, has, termCode }: { data: any; has: (p: string) =
         />
       )}
 
-      {/* Row 1: Academic Standing | Contract | Degree Progress */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      {/* Row 1: Academic Standing | Graduation Progress */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {has("academic") && data.academic && (
           <AcademicStandingCard {...data.academic} />
         )}
+        {has("graduation_tracker") && data.degreeProgress && (
+          <GraduationTracker
+            degreeProgress={data.degreeProgress}
+            creditsEarned={data.student.creditsEarned}
+            yearLevel={data.student.yearLevel}
+          />
+        )}
+      </div>
+
+      {/* Row 2: Contract | Degree Progress */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {has("contract") && (
           <ContractCard
             contracts={currentContracts.length > 0 ? currentContracts : data.contracts ?? []}
@@ -112,7 +124,7 @@ function SinceEntryLens({ data, has, termCode }: { data: any; has: (p: string) =
         )}
       </div>
 
-      {/* Row 2: Advising History | Most Recent Evaluation */}
+      {/* Row 3: Advising History | Most Recent Evaluation */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {(has("advising") || has("advising_limited")) && (
           <AdvisingHistoryCard
@@ -126,19 +138,19 @@ function SinceEntryLens({ data, has, termCode }: { data: any; has: (p: string) =
         )}
       </div>
 
-      {/* Row 3: Graduation tracker | Recommended courses */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {has("graduation_tracker") && data.degreeProgress && (
-          <GraduationTracker
-            degreeProgress={data.degreeProgress}
-            creditsEarned={data.student.creditsEarned}
-            yearLevel={data.student.yearLevel}
-          />
-        )}
-        {has("graduation_tracker") && data.suggestedCourses?.length > 0 && (
-          <SuggestedCourses courses={data.suggestedCourses} />
-        )}
-      </div>
+      {/* Recommended courses */}
+      {has("graduation_tracker") && data.suggestedCourses?.length > 0 && (
+        <SuggestedCourses courses={data.suggestedCourses} />
+      )}
+
+      {/* Engagement since entry — longitudinal timeline */}
+      {data.timeline && (
+        <AcademicTimeline
+          rows={data.timeline}
+          currentTermCode={CURRENT_TERM_CODE}
+          note="Engagement since entry — term GPAs from Banner, narratives from the NCF Evaluations System, ISP milestones from DegreeWorks."
+        />
+      )}
     </div>
   );
 }
@@ -186,11 +198,19 @@ function ThisSemesterLens({ data, has, termCode }: { data: any; has: (p: string)
   );
 }
 
-function AcademicLens({ data, has, termCode: _termCode }: { data: any; has: (p: string) => boolean; termCode: string }) {
+function AcademicLens({ data, has, termCode: _termCode, onLens }: { data: any; has: (p: string) => boolean; termCode: string; onLens: (l: Lens) => void }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
       <div className="lg:col-span-2 space-y-4">
         {has("academic") && data.academic && <AcademicStandingCard {...data.academic} />}
+        {has("graduation_tracker") && data.degreeProgress && (
+          <GraduationTracker
+            degreeProgress={data.degreeProgress}
+            creditsEarned={data.student.creditsEarned}
+            yearLevel={data.student.yearLevel}
+            onOpenSinceEntry={() => onLens("since_entry")}
+          />
+        )}
         {has("evaluations") && data.evaluations && (
           <EvaluationsCard evaluations={data.evaluations} />
         )}
@@ -248,6 +268,9 @@ function AdvisingLens({ data, has, termCode: _termCode }: { data: any; has: (p: 
           noteVisibility={has("advising") ? "full" : "redacted"}
         />
       )}
+      {(has("advising") || has("advising_limited")) && (
+        <MSPRCard msprs={data.msprs ?? []} />
+      )}
       {has("predictive") && data.predictiveInsights && (
         <PredictiveInsightsPanel
           studentId={data.student.id}
@@ -273,11 +296,19 @@ function AthleticsLens({ data, has }: { data: any; has: (p: string) => boolean }
       </div>
     );
   }
+  // NAIA progress inputs: current-term credit load + hours in the last two terms
+  const currentContract = (data.contracts ?? []).find((c: any) => c.termCode === CURRENT_TERM_CODE);
+  const gpas: any[] = data.academic?.semesterGpas ?? [];
+  const lastTwo = gpas.slice(-2);
+  const hoursPrevTwoTerms = lastTwo.reduce((sum: number, g: any) => sum + (g.credits ?? 0), 0);
+
   return (
     <AthleticsCard
       athletics={data.athletics}
       currentGpa={data.student.cumulativeGpa}
       creditsEarned={data.student.creditsEarned}
+      currentTermCredits={currentContract?.totalCredits ?? null}
+      hoursPrevTwoTerms={lastTwo.length === 2 ? hoursPrevTwoTerms : null}
     />
   );
 }

@@ -39,16 +39,11 @@ export async function GET(req: NextRequest) {
     return Response.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  let where: Prisma.StudentWhereInput;
-  if (scope === "all") {
-    where = {}; // gate above already enforced TIER_SEES_ALL
-  } else if (TIER_SEES_ALL[tier]) {
-    where = {}; // staff who see all use the same default view as "advisees"
-  } else if (tier === 1) {
-    where = { advisorId: userId };
-  } else {
-    where = { id: "__none__" }; // tiers 2-4 scoping not yet implemented
-  }
+  // "My advisees" (default scope) is always the user's own assigned caseload —
+  // even for see-all tiers. "All students" (?scope=all) returns everyone and is
+  // gated by TIER_SEES_ALL above.
+  const where: Prisma.StudentWhereInput =
+    scope === "all" ? {} : { advisorId: userId };
 
   const students = await prisma.student.findMany({
     where,

@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { computeNaiaChecks, NAIA_HANDBOOK_URL } from "@/lib/naia-eligibility";
 
 interface AthleticsRecord {
   sport: string;
@@ -14,6 +15,8 @@ interface Props {
   athletics: AthleticsRecord;
   currentGpa?: number | null;
   creditsEarned?: number;
+  currentTermCredits?: number | null;
+  hoursPrevTwoTerms?: number | null;
 }
 
 const statusConfig: Record<string, { variant: "green" | "amber" | "red" | "neutral"; label: string }> = {
@@ -23,7 +26,7 @@ const statusConfig: Record<string, { variant: "green" | "amber" | "red" | "neutr
   not_yet_certified: { variant: "neutral", label: "Not Yet Certified" },
 };
 
-export function AthleticsCard({ athletics, currentGpa, creditsEarned }: Props) {
+export function AthleticsCard({ athletics, currentGpa, creditsEarned, currentTermCredits, hoursPrevTwoTerms }: Props) {
   const status = statusConfig[athletics.eligibilityStatus] ?? { variant: "neutral" as const, label: athletics.eligibilityStatus };
 
   const gpaOk = currentGpa != null && currentGpa >= athletics.gpaRequired;
@@ -92,6 +95,45 @@ export function AthleticsCard({ athletics, currentGpa, creditsEarned }: Props) {
           </div>
         </div>
       )}
+
+      {/* NAIA eligibility checklist */}
+      <div className="mb-3">
+        <div className="flex items-center justify-between mb-1.5">
+          <div className="text-[10.5px] font-bold text-gray-400 uppercase tracking-wide">
+            NAIA eligibility (Sun Conference)
+          </div>
+          <a
+            href={NAIA_HANDBOOK_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[10px] text-navy hover:underline"
+          >
+            Official Handbook ↗
+          </a>
+        </div>
+        <div className="space-y-1.5">
+          {computeNaiaChecks({
+            cumulativeGpa: currentGpa ?? null,
+            creditsEarned: creditsEarned ?? 0,
+            creditLoadRequired: athletics.creditLoadRequired,
+            currentTermCredits: currentTermCredits ?? null,
+            hoursPrevTwoTerms: hoursPrevTwoTerms ?? null,
+          }).map((c) => (
+            <div key={c.id} className="flex items-start gap-2 text-xs">
+              <span
+                className={`mt-1 w-2 h-2 rounded-full shrink-0 ${
+                  c.status === "met" ? "bg-emerald-500" : c.status === "at_risk" ? "bg-red-500" : "bg-gray-300"
+                }`}
+              />
+              <div className="flex-1 min-w-0">
+                <span className="font-medium text-gray-800">{c.label}</span>
+                <span className="text-gray-500"> — {c.detail}</span>
+                <span className="text-[10px] text-gray-300 ml-1">{c.citation}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* FAR notes */}
       {athletics.farNotes && (

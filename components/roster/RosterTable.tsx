@@ -252,10 +252,22 @@ export function RosterTable({
               description="Try a different view or clear the search."
             />
           ) : (
-            filtered.map((s) => <RosterRow key={s.id} student={s} />)
+            <>
+              {filtered.slice(0, RENDER_LIMIT).map((s) => (
+                <RosterRow key={s.id} student={s} />
+              ))}
+              {filtered.length > RENDER_LIMIT && (
+                <div className="px-4 py-3 text-center text-xs text-gray-400 bg-gray-50/60 border-t border-gray-100">
+                  Showing first {RENDER_LIMIT} of {filtered.length.toLocaleString()} — refine with
+                  filters or search to narrow the list.
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
     </div>
   );
 }
+
+const RENDER_LIMIT = 100;
