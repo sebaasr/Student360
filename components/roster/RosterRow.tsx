@@ -3,7 +3,7 @@ import type { RosterStudent } from "@/types/student";
 import { PriorityBadge } from "./PriorityBadge";
 import { Badge } from "@/components/ui/Badge";
 import { Avatar } from "@/components/ui/Avatar";
-import { formatRelativeDate, yearLabel } from "@/lib/utils";
+import { formatRelativeDate, yearLabel, yearColor } from "@/lib/utils";
 
 const standingConfig: Record<string, { text: string; variant: "green" | "amber" | "red" }> = {
   good_standing:      { text: "Good standing",    variant: "green" },
@@ -31,11 +31,13 @@ export function RosterRow({ student }: { student: RosterStudent }) {
     ? contractConfig[student.currentTermContract.status]
     : null;
   const bf = student.brightFuturesStatus ? bfConfig[student.brightFuturesStatus] : null;
+  const yc = yearColor(student.yearLevel);
 
+  // Left accent: red for high priority, otherwise the student's class-year color.
   const rowHighlight =
     student.priority === "high"
-      ? "border-l-2 border-l-red-400 bg-red-50/30 hover:bg-red-50/60"
-      : "border-l-2 border-l-transparent hover:bg-gray-50/80";
+      ? "border-l-4 border-l-red-400 bg-red-50/30 hover:bg-red-50/60"
+      : `border-l-4 ${yc.bar} hover:bg-gray-50/80`;
 
   return (
     <Link
@@ -55,7 +57,9 @@ export function RosterRow({ student }: { student: RosterStudent }) {
         {/* Year · AOC */}
         <div className="col-span-2">
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-sm text-gray-800">{yearLabel(student.yearLevel)}</span>
+            <span className={`text-[11px] px-1.5 py-0.5 rounded-full border font-semibold ${yc.chip}`}>
+              {yearLabel(student.yearLevel)}
+            </span>
             {student.isTransfer && (
               <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200 font-medium">Transfer</span>
             )}
@@ -63,7 +67,7 @@ export function RosterRow({ student }: { student: RosterStudent }) {
               <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200 font-medium">{student.athleteSport}</span>
             )}
           </div>
-          <div className="text-[11px] text-gray-400 truncate">{student.aoc ?? "Undeclared"}</div>
+          <div className="text-[11px] text-gray-400 truncate mt-0.5">{student.aoc ?? "Undeclared"}</div>
         </div>
 
         {/* Standing */}

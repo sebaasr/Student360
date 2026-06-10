@@ -15,11 +15,12 @@ import { AdvisingHistoryCard } from "./AdvisingHistoryCard";
 import { MSPRCard } from "./MSPRCard";
 import { EvaluationsCard } from "./EvaluationsCard";
 import { EvaluationsPanel } from "./EvaluationsPanel";
+import { NarrativeEvalsTile } from "./NarrativeEvalsTile";
+import { ServiceUsageCard } from "./ServiceUsageCard";
 import { TutoringCard } from "./TutoringCard";
 import { SSCVisitsCard } from "./SSCVisitsCard";
 import { AthleticsCard } from "./AthleticsCard";
 import { FinancialCard } from "./FinancialCard";
-import { DegreeProgressCard } from "./DegreeProgressCard";
 
 interface Props {
   data: any; // payload from /api/student/[id]
@@ -74,6 +75,7 @@ export function ProfileBody({ data }: Props) {
 
       {lens === "since_entry" && <SinceEntryLens data={data} has={has} termCode={selectedTerm} />}
       {lens === "this_semester" && <ThisSemesterLens data={data} has={has} termCode={selectedTerm} />}
+      {lens === "next_semester" && <NextSemesterLens data={data} has={has} />}
       {lens === "academic" && <AcademicLens data={data} has={has} termCode={selectedTerm} onLens={setLens} />}
       {lens === "evaluations" && <EvaluationsLens data={data} has={has} />}
       {lens === "advising" && <AdvisingLens data={data} has={has} termCode={selectedTerm} />}
@@ -84,25 +86,26 @@ export function ProfileBody({ data }: Props) {
 }
 
 function SinceEntryLens({ data, has, termCode }: { data: any; has: (p: string) => boolean; termCode: string }) {
-  const currentContracts = (data.contracts ?? []).filter(
-    (c: any) => c.termCode === termCode,
-  );
+  const currentContracts = (data.contracts ?? []).filter((c: any) => c.termCode === termCode);
 
   return (
     <div className="space-y-4">
-      {/* Predictive insights — full width, first thing the advisor sees */}
-      {has("predictive") && data.predictiveInsights?.length > 0 && (
-        <PredictiveInsightsPanel
-          studentId={data.student.id}
-          insights={data.predictiveInsights}
+      {/* Academic timeline — horizontal, general view of the student's path */}
+      {data.timeline && (
+        <AcademicTimeline
+          rows={data.timeline}
+          currentTermCode={CURRENT_TERM_CODE}
+          note="Engagement since entry — term GPAs from Banner, narratives from the NCF Evaluations System, ISP milestones from DegreeWorks."
         />
       )}
 
-      {/* Row 1: Academic Standing | Graduation Progress */}
+      {/* Predictive insights — the synthesized "so what" */}
+      {has("predictive") && data.predictiveInsights?.length > 0 && (
+        <PredictiveInsightsPanel studentId={data.student.id} insights={data.predictiveInsights} />
+      )}
+
+      {/* Row 1: Graduation Progress | Current Semester */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {has("academic") && data.academic && (
-          <AcademicStandingCard {...data.academic} />
-        )}
         {has("graduation_tracker") && data.degreeProgress && (
           <GraduationTracker
             degreeProgress={data.degreeProgress}
@@ -110,46 +113,57 @@ function SinceEntryLens({ data, has, termCode }: { data: any; has: (p: string) =
             yearLevel={data.student.yearLevel}
           />
         )}
-      </div>
-
-      {/* Row 2: Contract | Degree Progress */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {has("contract") && (
-          <ContractCard
-            contracts={currentContracts.length > 0 ? currentContracts : data.contracts ?? []}
-          />
-        )}
-        {has("graduation_tracker") && data.degreeProgress && (
-          <DegreeProgressCard dp={data.degreeProgress} />
+          <ContractCard contracts={currentContracts.length > 0 ? currentContracts : data.contracts ?? []} />
         )}
       </div>
 
-      {/* Row 3: Advising History | Most Recent Evaluation */}
+      {/* Row 2: Narrative Evaluations (+ AI summary) | GPA */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {(has("advising") || has("advising_limited")) && (
-          <AdvisingHistoryCard
-            advising={data.advising ?? []}
-            earlyAlerts={data.earlyAlerts ?? []}
-            noteVisibility={has("advising") ? "full" : "redacted"}
-          />
-        )}
         {has("evaluations") && data.evaluations && (
-          <EvaluationsCard evaluations={data.evaluations.slice(0, 1)} />
+          <NarrativeEvalsTile studentId={data.student.id} evaluations={data.evaluations} />
+        )}
+        {has("academic") && data.academic && <AcademicStandingCard {...data.academic} />}
+      </div>
+
+      {/* Row 3: MSPR | Academic Service Usage */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {(has("advising") || has("advising_limited")) && <MSPRCard msprs={data.msprs ?? []} />}
+        {(has("tutoring") || has("ssc")) && (
+          <ServiceUsageCard
+            tutoring={data.tutoring ?? []}
+            sscVisits={data.sscVisits ?? []}
+            academicCoach={data.academicCoach ?? null}
+          />
         )}
       </div>
 
-      {/* Recommended courses */}
-      {has("graduation_tracker") && data.suggestedCourses?.length > 0 && (
-        <SuggestedCourses courses={data.suggestedCourses} />
+      {/* Scholarship — moved here from This Semester */}
+      {has("bright_futures") && data.brightFutures && (
+        <BrightFuturesCard status={data.brightFutures} />
       )}
+    </div>
+  );
+}
 
-      {/* Engagement since entry — longitudinal timeline */}
-      {data.timeline && (
-        <AcademicTimeline
-          rows={data.timeline}
-          currentTermCode={CURRENT_TERM_CODE}
-          note="Engagement since entry — term GPAs from Banner, narratives from the NCF Evaluations System, ISP milestones from DegreeWorks."
-        />
+function NextSemesterLens({ data, has }: { data: any; has: (p: string) => boolean }) {
+  return (
+    <div className="space-y-4">
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+        <h3 className="text-[10.5px] font-bold text-gray-400 uppercase tracking-widest mb-1">
+          Planning for next semester
+        </h3>
+        <p className="text-xs text-gray-500">
+          Course suggestions are drawn from the NCF Catalog 2025-26, matched to the student&apos;s
+          AOC, year level, and remaining requirements.
+        </p>
+      </div>
+      {has("graduation_tracker") && data.suggestedCourses?.length > 0 ? (
+        <SuggestedCourses courses={data.suggestedCourses} />
+      ) : (
+        <div className="bg-white rounded-xl border border-gray-200 p-6 text-center text-sm text-gray-400">
+          No course suggestions yet — they appear once DegreeWorks shows clear requirement gaps.
+        </div>
       )}
     </div>
   );
@@ -168,17 +182,17 @@ function ThisSemesterLens({ data, has, termCode }: { data: any; has: (p: string)
   );
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-      <div className="lg:col-span-2 space-y-4">
-        {has("predictive") && data.predictiveInsights && (
-          <PredictiveInsightsPanel
-            studentId={data.student.id}
-            insights={data.predictiveInsights}
-          />
-        )}
+    <div className="space-y-4">
+      {/* Two tiles: current registration/contract (left) | tutoring (right) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {has("contract") && (
           <ContractCard contracts={currentContract.length > 0 ? currentContract : data.contracts ?? []} />
         )}
+        {has("tutoring") && <TutoringCard sessions={tutoringThis} />}
+      </div>
+
+      {/* Advising this term | SSC this term */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {(has("advising") || has("advising_limited")) && (
           <AdvisingHistoryCard
             advising={advThis}
@@ -186,13 +200,7 @@ function ThisSemesterLens({ data, has, termCode }: { data: any; has: (p: string)
             noteVisibility={has("advising") ? "full" : "redacted"}
           />
         )}
-      </div>
-      <div className="space-y-4">
-        {has("tutoring") && <TutoringCard sessions={tutoringThis} />}
         {has("ssc") && <SSCVisitsCard visits={sscThis} coach={data.academicCoach ?? null} />}
-        {has("bright_futures") && data.brightFutures && (
-          <BrightFuturesCard status={data.brightFutures} />
-        )}
       </div>
     </div>
   );
@@ -213,9 +221,6 @@ function AcademicLens({ data, has, termCode: _termCode, onLens }: { data: any; h
         )}
         {has("evaluations") && data.evaluations && (
           <EvaluationsCard evaluations={data.evaluations} />
-        )}
-        {has("graduation_tracker") && data.degreeProgress && (
-          <DegreeProgressCard dp={data.degreeProgress} />
         )}
       </div>
       <div className="space-y-4">

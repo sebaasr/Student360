@@ -3,6 +3,7 @@
 export type Lens =
   | "since_entry"
   | "this_semester"
+  | "next_semester"
   | "academic"
   | "evaluations"
   | "advising"
@@ -12,6 +13,7 @@ export type Lens =
 const LENSES: { id: Lens; label: string }[] = [
   { id: "since_entry", label: "Since entry" },
   { id: "this_semester", label: "This semester" },
+  { id: "next_semester", label: "Next semester" },
   { id: "academic", label: "Academic" },
   { id: "evaluations", label: "Evaluations" },
   { id: "advising", label: "Advising" },
