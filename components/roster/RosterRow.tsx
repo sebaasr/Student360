@@ -47,7 +47,7 @@ export function RosterRow({ student }: { student: RosterStudent }) {
       <div className="grid grid-cols-12 gap-4 px-4 py-3.5 border-b border-gray-100 last:border-0 items-center">
         {/* Student */}
         <div className="col-span-3 flex items-center gap-3">
-          <Avatar name={student.name} size={34} />
+          <Avatar name={student.name} size={34} yearLevel={student.yearLevel} />
           <div className="min-w-0">
             <div className="font-semibold text-navy text-sm truncate">{student.name}</div>
             <div className="text-[11px] text-gray-400 truncate font-mono">{student.id}</div>

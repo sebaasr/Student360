@@ -1,5 +1,4 @@
-import { Avatar } from "@/components/ui/Avatar";
-import { yearLabel, studentDisplayName } from "@/lib/utils";
+import { yearLabel, studentDisplayName, yearAvatarHex } from "@/lib/utils";
 import { ProfileActions } from "./ProfileActions";
 
 interface Props {
@@ -57,9 +56,12 @@ export function StudentHeader({
 
       <div className="p-5">
         <div className="flex flex-wrap items-start gap-5">
-          {/* Avatar */}
+          {/* Avatar — colored by class year (same color for every student in a year) */}
           <div className="relative">
-            <div className="w-[72px] h-[72px] rounded-full bg-navy text-white flex items-center justify-center text-2xl font-bold font-serif select-none">
+            <div
+              className="w-[72px] h-[72px] rounded-full text-white flex items-center justify-center text-2xl font-bold font-serif select-none"
+              style={{ backgroundColor: yearAvatarHex(student.yearLevel) }}
+            >
               {initials}
             </div>
             {student.academicStanding === "academic_probation" && (

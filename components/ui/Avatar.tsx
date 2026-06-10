@@ -1,9 +1,14 @@
+import { yearAvatarHex } from "@/lib/utils";
+
 interface AvatarProps {
   name: string;
   /** Optional photo URL. When missing, falls back to colored initials. */
   src?: string | null;
   size?: number;
   className?: string;
+  /** When set, the background color is determined by class year (same color
+   *  for every student in that year) instead of the per-name palette. */
+  yearLevel?: number;
 }
 
 // Deterministic background palette — same student always gets the same color.
@@ -35,8 +40,8 @@ function initials(name: string): string {
     .toUpperCase();
 }
 
-export function Avatar({ name, src, size = 36, className }: AvatarProps) {
-  const bg = PALETTE[hashToPaletteIndex(name)];
+export function Avatar({ name, src, size = 36, className, yearLevel }: AvatarProps) {
+  const bg = yearLevel != null ? yearAvatarHex(yearLevel) : PALETTE[hashToPaletteIndex(name)];
   const dim = { width: size, height: size, fontSize: Math.round(size * 0.36) };
 
   if (src) {

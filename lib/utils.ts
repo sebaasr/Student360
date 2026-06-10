@@ -43,6 +43,19 @@ export function yearColor(yearLevel: number): YearColor {
   return map[yearLevel] ?? { dot: "bg-gray-300", bar: "border-l-gray-300", chip: "bg-gray-50 text-gray-600 border-gray-200" };
 }
 
+// Solid avatar background per class year — same color for every student in a
+// given year, so cohorts are recognizable at a glance.
+export function yearAvatarHex(yearLevel: number): string {
+  return (
+    {
+      1: "#0ea5e9", // First-Year — sky
+      2: "#10b981", // Sophomore — emerald
+      3: "#f59e0b", // Junior — amber
+      4: "#8b5cf6", // Senior — violet
+    }[yearLevel] ?? "#64748b" // unknown — slate
+  );
+}
+
 // NCF groups AOCs into three divisions. The AOC label is "Division (AOC)",
 // e.g. "Natural Sciences (Biology)" → division "Natural Sciences".
 export function divisionFromAoc(aoc: string | null | undefined): string {
