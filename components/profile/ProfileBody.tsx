@@ -109,6 +109,8 @@ function SinceEntryLens({ data, has }: { data: any; has: (p: string) => boolean;
             degreeProgress={data.degreeProgress}
             creditsEarned={data.student.creditsEarned}
             yearLevel={data.student.yearLevel}
+            declaredAoc={data.student.declaredAoc}
+            contracts={data.contracts ?? []}
           />
         )}
         {has("contract") && (
@@ -246,6 +248,8 @@ function AcademicLens({ data, has, onLens }: { data: any; has: (p: string) => bo
             degreeProgress={data.degreeProgress}
             creditsEarned={data.student.creditsEarned}
             yearLevel={data.student.yearLevel}
+            declaredAoc={data.student.declaredAoc}
+            contracts={data.contracts ?? []}
             onOpenSinceEntry={() => onLens("since_entry")}
           />
         )}

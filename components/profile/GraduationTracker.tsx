@@ -8,6 +8,8 @@ import {
   semestersRemaining,
   type DegreeProgressLike,
 } from "@/lib/graduation-tracker";
+import { RequirementsModal } from "./RequirementsModal";
+import { buildAocRequirements, buildGraduationRequirements } from "@/lib/requirements";
 
 interface Minor {
   minorName: string;
@@ -31,13 +33,16 @@ interface Props {
   degreeProgress: DP | null;
   creditsEarned: number;
   yearLevel: number;
+  declaredAoc?: string | null;
+  contracts?: { term: string; status: string }[];
   onOpenSinceEntry?: () => void;
 }
 
-export function GraduationTracker({ degreeProgress, creditsEarned, yearLevel, onOpenSinceEntry }: Props) {
+export function GraduationTracker({ degreeProgress, creditsEarned, yearLevel, declaredAoc, contracts = [], onOpenSinceEntry }: Props) {
   const semRem = semestersRemaining(yearLevel);
   const bars = buildGraduationTracker(degreeProgress, creditsEarned, semRem);
   const [openId, setOpenId] = useState<string | null>(null);
+  const [modal, setModal] = useState<"aoc" | "grad" | null>(null);
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
@@ -92,9 +97,29 @@ export function GraduationTracker({ degreeProgress, creditsEarned, yearLevel, on
           );
         })}
       </div>
-      <div className="text-[10px] text-gray-400 mt-2 pt-2 border-t border-gray-100">
-        Source: DegreeWorks · Banner
+      {/* View full requirements (DegreeWorks breakdown) */}
+      <div className="flex flex-wrap gap-3 mt-3 pt-2 border-t border-gray-100">
+        <button onClick={() => setModal("aoc")} className="text-[11px] font-medium text-navy hover:underline">
+          View AOC requirements →
+        </button>
+        <button onClick={() => setModal("grad")} className="text-[11px] font-medium text-navy hover:underline">
+          View graduation requirements →
+        </button>
+        <span className="ml-auto text-[10px] text-gray-400">Source: DegreeWorks · Banner</span>
       </div>
+
+      {modal === "aoc" && (
+        <RequirementsModal
+          breakdown={buildAocRequirements(degreeProgress, declaredAoc ?? null)}
+          onClose={() => setModal(null)}
+        />
+      )}
+      {modal === "grad" && (
+        <RequirementsModal
+          breakdown={buildGraduationRequirements({ creditsEarned }, degreeProgress, contracts)}
+          onClose={() => setModal(null)}
+        />
+      )}
     </div>
   );
 }
