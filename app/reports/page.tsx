@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { PageShell } from "@/components/layout/PageShell";
+import { MsprInsights } from "@/components/reports/MsprInsights";
 import type { RosterResponse } from "@/types/student";
 
 async function fetchAllStudents(): Promise<RosterResponse> {
@@ -100,6 +101,9 @@ export default async function ReportsPage() {
             ))}
           </div>
         </section>
+
+        {/* Real anonymized MSPR aggregate analytics */}
+        <MsprInsights />
 
         <p className="text-[11px] text-gray-400">
           Reports are read-only snapshots at the time the page was rendered. CSV exports + Title IX
