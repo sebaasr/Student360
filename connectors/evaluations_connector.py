@@ -77,11 +77,12 @@ def upsert_evaluation(conn, e: dict):
         cur.execute(
             """
             INSERT INTO "Evaluation" (id, "studentId", "instructorName", "courseCode",
-                "courseTitle", term, "termCode", "evaluationText", status,
+                "courseTitle", term, "termCode", "evaluationText", designation, status,
                 "submittedAt", "sourceId", "syncedAt")
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
             ON CONFLICT ("sourceId") DO UPDATE SET
                 "evaluationText" = EXCLUDED."evaluationText",
+                designation = EXCLUDED.designation,
                 status = EXCLUDED.status,
                 "submittedAt" = EXCLUDED."submittedAt",
                 "syncedAt" = NOW()
@@ -95,6 +96,7 @@ def upsert_evaluation(conn, e: dict):
                 e.get("term"),
                 e.get("term_code") or e.get("termCode"),
                 e.get("evaluation_text") or e.get("evaluationText"),
+                e.get("designation"),
                 e.get("status"),
                 e.get("submitted_at") or e.get("submittedAt"),
                 str(e.get("id")),

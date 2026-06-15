@@ -251,6 +251,7 @@ model Evaluation {
   term           String
   termCode       String
   evaluationText String
+  designation    String?
   status         String
   submittedAt    DateTime?
   sourceId       String?   @unique

@@ -5,7 +5,6 @@ import { LensBar, type Lens } from "./LensBar";
 import { AcademicTimeline } from "./AcademicTimeline";
 import { SuggestedCourses } from "./SuggestedCourses";
 import { GraduationTracker } from "./GraduationTracker";
-import { PredictiveInsightsPanel } from "./PredictiveInsightsPanel";
 import { BrightFuturesCard } from "./BrightFuturesCard";
 import { AcademicStandingCard } from "./AcademicStandingCard";
 import { ContractCard } from "./ContractCard";
@@ -76,7 +75,6 @@ export function ProfileBody({ data }: Props) {
       {lens === "next_semester" && <NextSemesterLens data={data} has={has} />}
       {lens === "academic" && <AcademicLens data={data} has={has} termCode={selectedTerm} onLens={setLens} />}
       {lens === "evaluations" && <EvaluationsLens data={data} has={has} />}
-      {lens === "advising" && <AdvisingLens data={data} has={has} termCode={selectedTerm} />}
       {lens === "athletics" && <AthleticsLens data={data} has={has} />}
       {lens === "financial" && <FinancialLens data={data} has={has} />}
     </div>
@@ -365,28 +363,6 @@ function EvaluationsLens({ data, has }: { data: any; has: (p: string) => boolean
   );
 }
 
-function AdvisingLens({ data, has, termCode: _termCode }: { data: any; has: (p: string) => boolean; termCode: string }) {
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      {(has("advising") || has("advising_limited")) && (
-        <AdvisingHistoryCard
-          advising={data.advising ?? []}
-          earlyAlerts={data.earlyAlerts ?? []}
-          noteVisibility={has("advising") ? "full" : "redacted"}
-        />
-      )}
-      {(has("advising") || has("advising_limited")) && (
-        <MSPRCard msprs={data.msprs ?? []} />
-      )}
-      {has("predictive") && data.predictiveInsights && (
-        <PredictiveInsightsPanel
-          studentId={data.student.id}
-          insights={data.predictiveInsights}
-        />
-      )}
-    </div>
-  );
-}
 
 function AthleticsLens({ data, has }: { data: any; has: (p: string) => boolean }) {
   if (!data.student.isStudentAthlete) {

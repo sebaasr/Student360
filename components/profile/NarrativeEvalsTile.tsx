@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { sourceLink } from "@/lib/source-links";
 
 interface Evaluation {
   id: string;
@@ -47,8 +48,22 @@ export function NarrativeEvalsTile({
     return () => { active = false; };
   }, [studentId]);
 
+  const narrativeUrl = sourceLink("evaluations", studentId);
+
   return (
-    <Card title="Narrative Evaluations" footer="Source: NCF Evaluations System">
+    <Card
+      title="Narrative Evaluations"
+      footer={
+        <span className="flex items-center justify-between">
+          <span>Source: NCF Narrative Evaluations System</span>
+          {narrativeUrl && (
+            <a href={narrativeUrl} target="_blank" rel="noopener noreferrer" className="text-navy hover:underline">
+              Open in Narrative Evaluations ↗
+            </a>
+          )}
+        </span>
+      }
+    >
       {/* AI summary */}
       <div className="mb-3 rounded-lg border border-navy/15 bg-navy-light/60 p-3">
         <div className="flex items-center gap-1.5 mb-2">

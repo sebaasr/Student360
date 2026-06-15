@@ -45,9 +45,9 @@ const SYSTEMS: Record<SourceSystem, SystemConfig> = {
     template: process.env.NEXT_PUBLIC_KNACK_URL ?? "https://www.knack.com/",
   },
   evaluations: {
-    label: "NCF Evaluations",
-    short: "Evaluations",
-    template: process.env.NEXT_PUBLIC_EVALUATIONS_URL,
+    label: "Narrative Evaluations",
+    short: "Narratives",
+    template: process.env.NEXT_PUBLIC_EVALUATIONS_URL ?? "https://evaluations.ncf.edu",
   },
 };
 

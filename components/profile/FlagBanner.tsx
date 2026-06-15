@@ -4,31 +4,34 @@ interface Props {
   financialFlags: number;
 }
 
+// Prominent warning tile — amber/gold so it stands out without the alarm of red.
 export function FlagBanner({ academicStanding, earlyAlerts, financialFlags }: Props) {
-  const flags: string[] = [];
-  const isUrgent = academicStanding === "academic_probation";
-  const isWarning = academicStanding === "academic_warning";
+  const warnings: string[] = [];
+  if (academicStanding === "academic_probation") warnings.push("Academic probation");
+  else if (academicStanding === "academic_warning") warnings.push("Academic warning");
+  if (earlyAlerts > 0) warnings.push(`${earlyAlerts} open early alert${earlyAlerts > 1 ? "s" : ""}`);
+  if (financialFlags > 0) warnings.push(`${financialFlags} financial flag${financialFlags > 1 ? "s" : ""}`);
 
-  if (isUrgent) flags.push("Academic probation");
-  else if (isWarning) flags.push("Academic warning");
-  if (earlyAlerts > 0) flags.push(`${earlyAlerts} open early alert${earlyAlerts > 1 ? "s" : ""}`);
-  if (financialFlags > 0) flags.push(`${financialFlags} financial flag${financialFlags > 1 ? "s" : ""}`);
-
-  if (flags.length === 0) return null;
-
-  const urgent = isUrgent || earlyAlerts > 0;
-  const bg = urgent ? "bg-red-600" : "bg-amber-500";
-  const border = urgent ? "border-red-700" : "border-amber-600";
+  if (warnings.length === 0) return null;
 
   return (
-    <div className={`${bg} ${border} border rounded-lg px-4 py-2.5 flex items-center gap-3`}>
-      <span className="text-white font-bold text-xs uppercase tracking-wide shrink-0">
-        {urgent ? "Action required" : "Note"}
-      </span>
-      <span className="text-white/30 shrink-0">|</span>
-      <p className="text-white text-sm font-medium">
-        {flags.join(" · ")}
-      </p>
+    <div className="rounded-xl border-2 border-amber-400 bg-amber-50 shadow-sm overflow-hidden">
+      <div className="flex items-stretch">
+        <div className="bg-amber-400 w-1.5 shrink-0" />
+        <div className="flex items-center gap-3 px-4 py-3 flex-wrap">
+          <span className="inline-flex items-center gap-1.5 text-amber-900 font-bold text-xs uppercase tracking-wide shrink-0">
+            <span className="w-5 h-5 rounded-full bg-amber-400 text-white flex items-center justify-center text-[11px] font-black">!</span>
+            Needs attention
+          </span>
+          <div className="flex flex-wrap gap-2">
+            {warnings.map((w) => (
+              <span key={w} className="text-sm font-medium text-amber-900 bg-amber-100 border border-amber-200 rounded-full px-2.5 py-0.5">
+                {w}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

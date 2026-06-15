@@ -4,6 +4,7 @@ import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { PageShell } from "@/components/layout/PageShell";
 import { StudentHeader } from "@/components/profile/StudentHeader";
+import { AdvisingTeam } from "@/components/profile/AdvisingTeam";
 import { SourceSystemBar } from "@/components/profile/SourceSystemBar";
 import { FlagBanner } from "@/components/profile/FlagBanner";
 import { ProfileBody } from "@/components/profile/ProfileBody";
@@ -65,7 +66,13 @@ export default async function StudentPage({ params }: { params: { id: string } }
           onTrack={onTrack}
           hasHold={hasHold}
         />
+        <AdvisingTeam
+          advisorName={data.student.advisor?.name ?? null}
+          academicCoachName={data.academicCoach?.coachName ?? null}
+          thesisSponsor={data.degreeProgress?.thesisSponsor ?? null}
+        />
         <SourceSystemBar studentId={data.student.id} />
+        {/* Warning tile — sits between the student header and the tab content/timeline */}
         <FlagBanner
           academicStanding={data.flags.academicStanding}
           earlyAlerts={data.flags.earlyAlerts}
