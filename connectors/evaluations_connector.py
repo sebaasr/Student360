@@ -3,8 +3,17 @@ NCF Evaluations → Student 360 connector.
 
 Two transport modes: direct read-only PostgreSQL connection (preferred) or
 internal REST API. Configure via EVALUATIONS_DB_URL or EVALUATIONS_API_URL.
+
+To pull from the NCF Narrative Evaluations app (Supabase), point this connector
+at its export view:
+    EVALUATIONS_DB_URL=postgresql://student360_reader:***@db.<project>.supabase.co:5432/postgres
+    EVALUATIONS_SOURCE=student360_evaluations_export
+The view (integrations/student360_export.sql in that repo) already maps
+student_id to the N-Number and exposes only public narratives — never the
+private evaluation.
 """
 import os
+import re
 import uuid
 
 import psycopg2
@@ -17,6 +26,14 @@ EVAL_DB_URL = os.environ.get("EVALUATIONS_DB_URL", "")
 EVAL_API_URL = os.environ.get("EVALUATIONS_API_URL", "")
 EVAL_API_KEY = os.environ.get("EVALUATIONS_API_KEY", "")
 
+# Source relation (table or view) to read from. Defaults to "evaluations" for a
+# generic source; set to "student360_evaluations_export" for the Supabase app.
+EVAL_SOURCE = os.environ.get("EVALUATIONS_SOURCE", "evaluations")
+# Trusted internal config, but validate it is a plain (optionally schema-qualified)
+# identifier before interpolating into the FROM clause.
+if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)?", EVAL_SOURCE):
+    raise ValueError(f"Invalid EVALUATIONS_SOURCE: {EVAL_SOURCE!r}")
+
 
 def fetch_via_db() -> list[dict]:
     conn = psycopg2.connect(EVAL_DB_URL)
@@ -24,10 +41,10 @@ def fetch_via_db() -> list[dict]:
     try:
         with conn.cursor() as cur:
             cur.execute(
-                """
+                f"""
                 SELECT id, student_id, instructor_name, course_code, course_title,
                        term, term_code, evaluation_text, status, submitted_at
-                FROM evaluations
+                FROM {EVAL_SOURCE}
                 """
             )
             cols = [d[0] for d in cur.description]
@@ -38,13 +55,21 @@ def fetch_via_db() -> list[dict]:
 
 
 def fetch_via_api() -> list[dict]:
+    # Works with a custom API ({"data": [...]}) or Supabase PostgREST (bare array
+    # at /rest/v1/<source>, requiring an apikey header).
+    base = EVAL_API_URL.rstrip("/")
+    url = f"{base}/{EVAL_SOURCE}" if base.endswith("/rest/v1") else f"{base}/evaluations"
     r = requests.get(
-        f"{EVAL_API_URL}/evaluations",
-        headers={"Authorization": f"Bearer {EVAL_API_KEY}"},
+        url,
+        headers={
+            "Authorization": f"Bearer {EVAL_API_KEY}",
+            "apikey": EVAL_API_KEY,
+        },
         timeout=60,
     )
     r.raise_for_status()
-    return r.json().get("data", [])
+    body = r.json()
+    return body if isinstance(body, list) else body.get("data", [])
 
 
 def upsert_evaluation(conn, e: dict):
