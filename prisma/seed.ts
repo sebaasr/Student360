@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { coursesForDivision, pickDesignation, designationToStatus, type Designation } from "../lib/ncf-enrollment";
+import { TUTORING_SUBJECTS, subjectPrefix } from "../lib/service-usage";
 import { divisionFromAoc } from "../lib/utils";
 
 const prisma = new PrismaClient();
@@ -863,6 +864,8 @@ async function generateBulkStudents(
   const contracts: any[] = [];
   const insights: any[] = [];
   const evaluations: any[] = [];
+  const tutoring: any[] = [];
+  const sscVisits: any[] = [];
 
   let counter = 1000; // start high to avoid colliding with hero IDs
 
@@ -987,6 +990,89 @@ async function generateBulkStudents(
           syncedAt: new Date(),
         });
       }
+
+      // Academic service usage — derived from real NCF Learning Commons weekly
+      // reports (Study Hall, SSC, Knack/ARC tutoring, Writing, Academic Coaching).
+      // Engagement is biased by need: athletes use Study Hall; lower-GPA and
+      // at-risk students use SSC/coaching more; everyone may use peer tutoring.
+      const svcYear = 2026; // current academic year activity
+      function sscDate(monthOffset: number) {
+        const base = rnd() < 0.5 ? new Date("2025-10-01") : new Date("2026-02-15");
+        return new Date(base.getTime() + monthOffset * 86400000 * 14 * rnd());
+      }
+
+      // Athletics study hall (most athletes participate)
+      if (isAthlete && rnd() < 0.85) {
+        const nSessions = 1 + Math.floor(rnd() * 4);
+        for (let v = 0; v < nSessions; v++) {
+          sscVisits.push({
+            studentId: id, visitDate: sscDate(v), visitType: "scheduled",
+            serviceType: "Athletics Study Hall",
+            staffName: "Athletics Academic Support",
+            notes: "Required student-athlete study hall hours.",
+            termCode: "202601", _term: true,
+          });
+        }
+      }
+
+      // Student Success Center — heaviest for at-risk students
+      const sscProb = standing === "academic_probation" ? 0.9 : standing === "academic_warning" ? 0.7 : 0.28;
+      if (rnd() < sscProb) {
+        const nVisits = 1 + Math.floor(rnd() * (standing === "good_standing" ? 2 : 4));
+        for (let v = 0; v < nVisits; v++) {
+          sscVisits.push({
+            studentId: id, visitDate: sscDate(v), visitType: rnd() < 0.5 ? "drop_in" : "scheduled",
+            serviceType: "Student Success Center",
+            staffName: "SSC Staff",
+            notes: "Academic success check-in and resource referral.",
+            termCode: "202601", _term: true,
+          });
+        }
+      }
+
+      // Academic coaching — short, frequent for students needing structure
+      if (rnd() < (standing === "good_standing" ? 0.15 : 0.45)) {
+        sscVisits.push({
+          studentId: id, visitDate: sscDate(0), visitType: "scheduled",
+          serviceType: "Academic Coaching",
+          staffName: "Coach Rivera",
+          notes: "Time management and study strategies.",
+          termCode: "202601", _term: true,
+        });
+      }
+
+      // Peer tutoring (Knack) / ARC tutoring — subject matched where possible
+      const tutoringProb = gpa < 2.5 ? 0.6 : gpa < 3.2 ? 0.4 : 0.22;
+      if (rnd() < tutoringProb) {
+        const nSessions = 1 + Math.floor(rnd() * 3);
+        for (let v = 0; v < nSessions; v++) {
+          const subject = TUTORING_SUBJECTS[(counter + v) % TUTORING_SUBJECTS.length];
+          const isKnack = rnd() < 0.75; // Knack is more popular than ARC
+          tutoring.push({
+            studentId: id, sessionDate: sscDate(v),
+            durationMins: isKnack ? 60 + Math.floor(rnd() * 60) : 45 + Math.floor(rnd() * 75),
+            subject,
+            courseCode: `${subjectPrefix(subject)} ${100 + Math.floor(rnd() * 300)}`,
+            tutorName: isKnack ? "Peer Tutor (Knack)" : "ARC Tutor",
+            sessionType: isKnack ? "peer_tutoring" : "scheduled",
+            termCode: "202601", _term: true,
+          });
+        }
+      }
+
+      // Writing Resource Center
+      if (rnd() < 0.18) {
+        const subject = "Writing";
+        tutoring.push({
+          studentId: id, sessionDate: sscDate(0),
+          durationMins: 45 + Math.floor(rnd() * 45),
+          subject,
+          courseCode: `WRIT ${100 + Math.floor(rnd() * 200)}`,
+          tutorName: "Writing Consultant (WRC)",
+          sessionType: "drop_in",
+          termCode: "202601", _term: true,
+        });
+      }
     }
   }
 
@@ -998,6 +1084,23 @@ async function generateBulkStudents(
   await prisma.contract.createMany({ data: contracts });
   if (insights.length) await prisma.predictiveInsight.createMany({ data: insights });
   if (evaluations.length) await prisma.evaluation.createMany({ data: evaluations });
+  if (tutoring.length)
+    await prisma.tutoringSession.createMany({
+      data: tutoring.map((t) => ({
+        studentId: t.studentId, sessionDate: t.sessionDate, durationMins: t.durationMins,
+        subject: t.subject, courseCode: t.courseCode, tutorName: t.tutorName,
+        sessionType: t.sessionType, wasNoShow: false,
+        term: term(t.termCode), termCode: t.termCode, syncedAt: new Date(),
+      })),
+    });
+  if (sscVisits.length)
+    await prisma.sSCVisit.createMany({
+      data: sscVisits.map((v) => ({
+        studentId: v.studentId, visitDate: v.visitDate, visitType: v.visitType,
+        serviceType: v.serviceType, staffName: v.staffName, notes: v.notes,
+        term: term(v.termCode), termCode: v.termCode, syncedAt: new Date(),
+      })),
+    });
 
   return students.length;
 }
