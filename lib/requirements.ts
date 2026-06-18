@@ -150,6 +150,27 @@ export function buildGraduationRequirements(
     );
   }
 
+  // General education
+  const genEdReq = dp?.genEdRequired ?? 20;
+  const genEdDone = dp?.genEdCompleted ?? 0;
+  const genEdItems: ReqItem[] = [
+    {
+      name: "General education requirements",
+      subtext: `${genEdDone} of ${genEdReq} requirements complete`,
+      status: genEdDone >= genEdReq ? "complete" : genEdDone > 0 ? "in_progress" : "not_fulfilled",
+    },
+    {
+      name: "First-Year Writing & Quantitative Reasoning",
+      subtext: genEdDone >= 4 ? "Completed" : "In progress",
+      status: genEdDone >= 4 ? "complete" : "in_progress",
+    },
+    {
+      name: "Breadth across divisions",
+      subtext: genEdDone >= genEdReq ? "Satisfied" : `${Math.max(0, genEdReq - genEdDone)} requirement(s) remaining`,
+      status: genEdDone >= genEdReq ? "complete" : genEdDone >= genEdReq / 2 ? "in_progress" : "not_fulfilled",
+    },
+  ];
+
   // Credits & thesis
   const aocPct = Math.round((dp?.aocPercentComplete ?? 0) * 100);
   const creditsThesis: ReqItem[] = [
@@ -169,6 +190,7 @@ export function buildGraduationRequirements(
   const sections: ReqSection[] = [
     { label: "Contracts", summary: countSummary(contractItems, "satisfactory"), items: contractItems },
     { label: "Independent Study Projects", summary: countSummary(ispItems), items: ispItems },
+    { label: "General Education", summary: countSummary(genEdItems), items: genEdItems },
     { label: "Credits & Thesis", summary: countSummary(creditsThesis), items: creditsThesis },
   ];
 

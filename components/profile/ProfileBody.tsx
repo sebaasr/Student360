@@ -102,6 +102,15 @@ function showAthletics(data: any, has: (p: string) => boolean) {
 function SinceEntryLens({ data, has }: { data: any; has: (p: string) => boolean; termCode: string }) {
   return (
     <div className="space-y-4">
+      {/* Academic timeline — at the very top, general view of the student's path */}
+      {data.timeline && (
+        <AcademicTimeline
+          rows={data.timeline}
+          currentTermCode={CURRENT_TERM_CODE}
+          note="Engagement since entry — term GPAs from Banner, narratives from the NCF Evaluations System, ISP milestones from DegreeWorks."
+        />
+      )}
+
       {/* Row 1: Graduation Progress | This Semester */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {has("graduation_tracker") && data.degreeProgress && (

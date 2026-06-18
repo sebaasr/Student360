@@ -1,4 +1,6 @@
 import { PrismaClient } from "@prisma/client";
+import { coursesForDivision, pickDesignation, designationToStatus, type Designation } from "../lib/ncf-enrollment";
+import { divisionFromAoc } from "../lib/utils";
 
 const prisma = new PrismaClient();
 
@@ -7,6 +9,39 @@ function term(code: string): string {
   const y = code.slice(0, 4);
   const m = code.slice(4, 6);
   return m === "09" ? `Fall ${y}` : m === "01" ? `Spring ${y}` : `Summer ${y}`;
+}
+
+// Division → course-code prefix, for plausible codes on real course titles.
+const DIV_PREFIX: Record<string, string> = {
+  "Natural Sciences": "NSCI",
+  Humanities: "HUM",
+  "Social Sciences": "SOSC",
+  Interdisciplinary: "IDST",
+  Undeclared: "NCF",
+};
+
+// Short narrative text by evaluation designation.
+function evalText(d: Designation, course: string): string {
+  const map: Record<Designation, string[]> = {
+    strong_sat: [
+      `Outstanding work in ${course}. Engaged deeply with the material and consistently exceeded expectations in written and seminar work.`,
+      `Among the strongest students in ${course} this term — insightful contributions, rigorous analysis, and excellent independent thinking.`,
+    ],
+    sat: [
+      `Solid, consistent performance in ${course}. Met all expectations and participated thoughtfully throughout the term.`,
+      `Reliable and engaged work in ${course}. Demonstrated a good command of the material and steady progress.`,
+    ],
+    marginal_sat: [
+      `Adequate work in ${course}, though engagement was uneven. Would benefit from more consistent attendance and earlier communication when struggling.`,
+      `Passed ${course} but performance was below potential. Some late assignments; recommend an advising check-in on workload.`,
+    ],
+    unsat: [
+      `Did not meet the requirements of ${course}. Significant missing work and inconsistent attendance. Immediate advising intervention recommended.`,
+      `Unsatisfactory work in ${course}. Multiple unsubmitted assignments and limited engagement this term.`,
+    ],
+  };
+  const opts = map[d];
+  return opts[Math.floor(Math.random() * opts.length)];
 }
 
 async function main() {
@@ -827,6 +862,7 @@ async function generateBulkStudents(
   const athletics: any[] = [];
   const contracts: any[] = [];
   const insights: any[] = [];
+  const evaluations: any[] = [];
 
   let counter = 1000; // start high to avoid colliding with hero IDs
 
@@ -923,6 +959,34 @@ async function generateBulkStudents(
           severity: "urgent",
         });
       }
+
+      // Narrative evaluations — real NCF courses (matched to AOC division) +
+      // real evaluation designations. Lower-GPA students skew toward marginal/unsat.
+      const division = divisionFromAoc(aoc);
+      const pool = coursesForDivision(division);
+      const prefix = DIV_PREFIX[division] ?? "NCF";
+      const numEvals = Math.min(5, Math.max(1, yearLevel + 1));
+      for (let e = 0; e < numEvals; e++) {
+        const course = pool[(counter + e) % pool.length];
+        // Bias designation by GPA: strong students get better designations.
+        const r = gpa >= 3.3 ? rnd() * 0.55 : gpa >= 2.5 ? rnd() * 0.8 + 0.1 : rnd() * 0.5 + 0.5;
+        const designation = pickDesignation(Math.min(0.999, r));
+        const yr = enrollYear + Math.min(yearLevel - 1, Math.floor(e / 2));
+        const tc = `${yr}${e % 2 === 0 ? "09" : "01"}`;
+        evaluations.push({
+          studentId: id,
+          instructorName: course.instructor,
+          courseCode: `${prefix} ${200 + ((counter + e) % 250)}`,
+          courseTitle: course.title,
+          term: term(tc),
+          termCode: tc,
+          evaluationText: evalText(designation, course.title),
+          designation,
+          status: designationToStatus(designation),
+          submittedAt: new Date(`${yr}-12-15`),
+          syncedAt: new Date(),
+        });
+      }
     }
   }
 
@@ -933,6 +997,7 @@ async function generateBulkStudents(
   if (athletics.length) await prisma.athleticsRecord.createMany({ data: athletics });
   await prisma.contract.createMany({ data: contracts });
   if (insights.length) await prisma.predictiveInsight.createMany({ data: insights });
+  if (evaluations.length) await prisma.evaluation.createMany({ data: evaluations });
 
   return students.length;
 }
@@ -1056,7 +1121,7 @@ async function seedStudent(s: SeedStudent) {
 
   await prisma.evaluation.deleteMany({ where: { studentId: s.id } });
   if (s.evaluations?.length)
-    await prisma.evaluation.createMany({ data: s.evaluations.map((e) => ({ studentId: s.id, instructorName: e.instructorName, courseCode: e.courseCode, courseTitle: e.courseTitle, term: e.term, termCode: e.termCode, evaluationText: e.text, status: e.status, submittedAt: e.submittedAt, syncedAt: new Date() })) });
+    await prisma.evaluation.createMany({ data: s.evaluations.map((e) => ({ studentId: s.id, instructorName: e.instructorName, courseCode: e.courseCode, courseTitle: e.courseTitle, term: e.term, termCode: e.termCode, evaluationText: e.text, designation: e.status === "unsatisfactory" ? "unsat" : "strong_sat", status: e.status, submittedAt: e.submittedAt, syncedAt: new Date() })) });
 
   await prisma.tutoringSession.deleteMany({ where: { studentId: s.id } });
   if (s.tutoring?.length)
