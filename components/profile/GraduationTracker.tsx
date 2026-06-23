@@ -9,7 +9,7 @@ import {
   type DegreeProgressLike,
 } from "@/lib/graduation-tracker";
 import { RequirementsModal } from "./RequirementsModal";
-import { buildAocRequirements, buildGraduationRequirements } from "@/lib/requirements";
+import { buildAocRequirements, buildGenEdRequirements, buildGraduationRequirements } from "@/lib/requirements";
 
 interface Minor {
   minorName: string;
@@ -42,7 +42,7 @@ export function GraduationTracker({ degreeProgress, creditsEarned, yearLevel, de
   const semRem = semestersRemaining(yearLevel);
   const bars = buildGraduationTracker(degreeProgress, creditsEarned, semRem);
   const [openId, setOpenId] = useState<string | null>(null);
-  const [modal, setModal] = useState<"aoc" | "grad" | null>(null);
+  const [modal, setModal] = useState<"aoc" | "gened" | "grad" | null>(null);
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
@@ -102,6 +102,9 @@ export function GraduationTracker({ degreeProgress, creditsEarned, yearLevel, de
         <button onClick={() => setModal("aoc")} className="text-[11px] font-medium text-navy hover:underline">
           View AOC requirements →
         </button>
+        <button onClick={() => setModal("gened")} className="text-[11px] font-medium text-navy hover:underline">
+          View general education requirements →
+        </button>
         <button onClick={() => setModal("grad")} className="text-[11px] font-medium text-navy hover:underline">
           View graduation requirements →
         </button>
@@ -111,6 +114,12 @@ export function GraduationTracker({ degreeProgress, creditsEarned, yearLevel, de
       {modal === "aoc" && (
         <RequirementsModal
           breakdown={buildAocRequirements(degreeProgress, declaredAoc ?? null)}
+          onClose={() => setModal(null)}
+        />
+      )}
+      {modal === "gened" && (
+        <RequirementsModal
+          breakdown={buildGenEdRequirements(degreeProgress)}
           onClose={() => setModal(null)}
         />
       )}
